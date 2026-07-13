@@ -12,13 +12,11 @@ class Tiro extends Obj {
         this.x += this.velX
         this.y += this.velY
 
-        // Tiro do herói: sai pela borda direita → desativa
         if (this.dono === 'heroi' && this.x > 1210) {
             this.ativo = false
             return
         }
 
-        // Tiro do vilão: rebate nas bordas top/bottom, sai pela esquerda → desativa
         if (this.dono === 'vilao') {
             if (this.y <= 0) {
                 this.y = 0
@@ -28,11 +26,9 @@ class Tiro extends Obj {
                 this.y = 700 - this.h
                 this.velY *= -1
             }
-            // Sai pela borda esquerda
             if (this.x < -20) {
                 this.ativo = false
             }
-            // Sai pela borda direita (caso de ângulo estranho)
             if (this.x > 1210) {
                 this.ativo = false
             }
@@ -42,39 +38,44 @@ class Tiro extends Obj {
     des_tiro() {
         if (!this.ativo) return
 
-        if (this.dono === 'heroi') { // <── troque este bloco por des.drawImage(...) para usar um sprite no tiro do herói
-            // Tiro do herói: projétil azul ciano com brilho
-            // Núcleo brilhante
-            des.fillStyle = '#ffffff'
-            des.fillRect(this.x + 4, this.y + 1, 6, 4)
+        if (this.dono === 'heroi') {
+            let cx = this.x + this.w / 2
+            let cy = this.y + this.h / 2
 
-            // Corpo do tiro
-            des.fillStyle = '#00eeff'
-            des.fillRect(this.x, this.y, this.w, this.h)
+            // <── escolhe o sprite do tiro conforme a fase
+            let quadro = null
+            if (fase === 1) {
+                quadro = Math.floor(Date.now() / 90) % 2 === 0 ? IMG.tiro_heroi1 : IMG.tiro_heroi2
+            } else if (fase === 2) {
+                quadro = IMG.tiro_davi1
+            } else if (fase === 3) {
+                quadro = IMG.tiro_pedrion1
+            } else if (fase === 4) {
+                quadro = IMG.tiro_mutavio1
+            }
 
-            // Cauda brilhante
-            des.fillStyle = 'rgba(0, 238, 255, 0.4)'
-            des.fillRect(this.x - 8, this.y + 1, 10, 4)
-
-            // Brilho frontal
-            des.fillStyle = 'rgba(255,255,255,0.6)'
-            des.fillRect(this.x + this.w - 4, this.y + 1, 4, 4)
+            if (quadro && quadro.complete && quadro.naturalWidth > 0) {
+                let sw = 40, sh = 26
+                des.drawImage(quadro, cx - sw / 2, cy - sh / 2, sw, sh)
+            } else {
+                // Fallback (sprite ainda não carregado): desenho original
+                des.fillStyle = '#ffffff'
+                des.fillRect(this.x + 4, this.y + 1, 6, 4)
+                des.fillStyle = '#00eeff'
+                des.fillRect(this.x, this.y, this.w, this.h)
+                des.fillStyle = 'rgba(0, 238, 255, 0.4)'
+                des.fillRect(this.x - 8, this.y + 1, 10, 4)
+                des.fillStyle = 'rgba(255,255,255,0.6)'
+                des.fillRect(this.x + this.w - 4, this.y + 1, 4, 4)
+            }
 
         } else { // <── troque este bloco por des.drawImage(...) para usar um sprite no tiro do vilão
-            // Tiro do vilão: projétil vermelho com rastro
-            // Rastro
             des.fillStyle = 'rgba(255, 50, 0, 0.35)'
             des.fillRect(this.x + this.w - 2, this.y + 1, 10, 4)
-
-            // Corpo
             des.fillStyle = '#ff2200'
             des.fillRect(this.x, this.y, this.w, this.h)
-
-            // Núcleo
             des.fillStyle = '#ffaa00'
             des.fillRect(this.x + 2, this.y + 1, 6, 4)
-
-            // Ponta
             des.fillStyle = '#ffffff'
             des.fillRect(this.x, this.y + 2, 3, 2)
         }
