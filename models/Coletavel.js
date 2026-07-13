@@ -34,10 +34,10 @@ class Coletavel extends Obj {
         des.fillStyle = 'rgba(255, 0, 80, 0.2)'
         des.fillRect(this.x - 2, this.y + 4, this.w + 4, this.h + 4)
 
-        // Pixel art do coração (grid 7x6)
-        let px = 4 // tamanho de cada pixel
-        let ox = this.x  // offset x
-        let oy = this.y  // offset y
+        
+        let px = 4 
+        let ox = this.x  
+        let oy = this.y  
 
         // Mapa do coração (1 = pixel preenchido)
         let mapa = [

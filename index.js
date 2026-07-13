@@ -1,31 +1,20 @@
 let des = document.getElementById('des').getContext('2d')
- 
-// ═══════════════════════════════════════════════════════════════
-//  ESTADO GLOBAL
-//  tela: 'menu' | 'cutscene' | 'jogando' | 'vitoria_fase1'
-//       | 'vitoria_fase2' | 'vitoria_fase3' | 'vitoria' (final)
-//       | 'derrota' | 'manual' | 'sobre'
-// ═══════════════════════════════════════════════════════════════
+
 let tela = 'menu'
 let fase = 1
  
-// ─── PRÉ-CARREGAMENTO DAS IMAGENS ─────────────────────────────
 let IMG = {}
 ;[
-    ['torre',   'img/cenario1_torre.png'],   // <── troque aqui a imagem do cenário 1
-    ['cidade',  'img/cenario2_cidade.png'],  // <── troque aqui a imagem do cenário 2
-    ['praia',   'img/cenario3_praia.png'],   // <── troque aqui a imagem do cenário 3
-    ['vitoria', 'img/cenario3_vitoria.png'], // <── troque aqui a imagem da tela de vitória (Fase 1)
-    ['lab',          'img/cenario4_lab.png'],         // <── cenário do Salão Principal (Fase 2)
-    ['lab_vitoria',  'img/cenario4_lab_vitoria.png'],  // <── troque aqui a imagem da tela de vitória (Fase 2)
-    ['cobertura',         'img/cenario5_cobertura.png'],         // <── cenário do Acerto de Contas (Fase 3)
-    ['cobertura_vitoria', 'img/cenario5_cobertura_vitoria.png'], // <── troque aqui a imagem da tela de vitória (Fase 3)
-    ['lutaFinal',         'img/cenario7_lutaFinal.png'],         // <── cenário do Chefão Apocalíptico (Fase 4)
-    ['lutaFinal_vitoria', 'img/cenario7_lutaFinal_vitoria.png'], // <── troque aqui a imagem da tela de vitória final (Fase 4)
-    // ['heroi',      'img/heroi.png'],      // <── adicione aqui o sprite do herói (usar em des_heroi(), no Heroi.js)
-    // ['vilao',      'img/vilao.png'],      // <── adicione aqui o sprite do vilão (usar em des_vilao(), no Vilao.js)
-    // ['tiro_heroi', 'img/tiro_heroi.png'], // <── adicione aqui o sprite do tiro do herói (usar em des_tiro(), no Tiro.js)
-    // ['tiro_vilao', 'img/tiro_vilao.png'], // <── adicione aqui o sprite do tiro do vilão (usar em des_tiro(), no Tiro.js)
+    ['torre',   'img/cenario1_torre.png'],  
+    ['cidade',  'img/cenario2_cidade.png'],  
+    ['praia',   'img/cenario3_praia.png'],   
+    ['vitoria', 'img/cenario3_vitoria.png'], 
+    ['lab',          'img/cenario4_lab.png'],         
+    ['lab_vitoria',  'img/cenario4_lab_vitoria.png'],  
+    ['cobertura',         'img/cenario5_cobertura.png'],         
+    ['cobertura_vitoria', 'img/cenario5_cobertura_vitoria.png'], 
+    ['lutaFinal',         'img/cenario7_lutaFinal.png'],         
+    ['lutaFinal_vitoria', 'img/cenario7_lutaFinal_vitoria.png'], 
 ].forEach(([k, src]) => {
     IMG[k] = new Image()
     IMG[k].src = src
@@ -47,9 +36,6 @@ const INTERVALO_CORACAO = 480
  
 // ═══════════════════════════════════════════════════════════════
 //  ROTEIRO — Fase 1
-//  Cada fala tem { personagem, fala, cor, fundo }
-//  "fundo" define qual imagem do IMG aparece no fundo.
-//  A troca acontece automaticamente ao passar para a fala.
 // ═══════════════════════════════════════════════════════════════
 const FALAS_FASE1 = [
     // ── CENA 1: Torre Amanhecer ─────────────────────────────
