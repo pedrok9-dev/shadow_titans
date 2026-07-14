@@ -8,7 +8,6 @@ let fase = 1
 let IMG = {}
 ;[
     ['torre',   'img/cenario1_torre.png'],   
-    ['menu_fundo', 'img/imagem_de_fundo_do_jogo.png'],
     ['cidade',  'img/cenario2_cidade.png'],  
     ['praia',   'img/cenario3_praia.png'],   
     ['vitoria', 'img/cenario3_vitoria.png'], 
@@ -48,27 +47,6 @@ let IMG = {}
     ['mutavio_correndo2', 'img/paulo_correndo_02.png'], 
     ['mutavio_atirando',  'img/paulo_atirando_01.png'], 
     ['tiro_mutavio1',     'img/paulo_tiro_01.png'], 
-    ['vilao_fase1_parado1',   'img/doutor_luz_parado_01.png'],
-    ['vilao_fase1_parado2',   'img/doutor_luz_parado_02.png'],
-    ['vilao_fase1_parado3',   'img/doutor_luz_parado_03.png'],
-    ['vilao_fase1_atirando',  'img/doutor_luz_atirando_01.png'],
-    ['vilao_fase2_parado1',   'img/senhorX_parado_01.png'],
-    ['vilao_fase2_parado2',   'img/senhorX_parado_02.png'],
-    ['vilao_fase2_parado3',   'img/senhorX_parado_03.png'],
-    ['vilao_fase2_atirando',  'img/senhorX_atirando_01.png'],
-    ['vilao_fase3_parado1',   'img/shade_parado_01.png'],
-    ['vilao_fase3_parado2',   'img/shade_parado_02.png'],
-    ['vilao_fase3_parado3',   'img/shade_parado_03.png'],
-    ['vilao_fase3_atirando',  'img/shade_atirando01.png'],
-    ['vilao_fase4_parado1',   'img/zul_parado_01.png'],
-    ['vilao_fase4_parado2',   'img/zul_parado_02.png'],
-    ['vilao_fase4_parado3',   'img/zul_parado_03.png'],
-    ['vilao_fase4_atirando',  'img/zulkar_atirando_01.png'],
-    ['tiro_vilao_fase1',      'img/doutor_luz_tiro01.png'],
-    ['tiro_vilao_fase2',      'img/senhorX_tiro01.png'],
-    ['tiro_vilao_fase3',      'img/shade_tiro01.png'],
-    ['tiro_vilao_fase4',      'img/zul_tiro01.png'],
-    ['torre_final',   'img/cenario_final.png'],
     
 ].forEach(([k, src]) => {
     IMG[k] = new Image()
@@ -242,43 +220,43 @@ const FALAS_POS_LUTA_FASE4 = [
         personagem: 'Narrador',
         fala: 'Com um último ataque devastador em sua forma de T-Rex, Mutávio quebra as runas místicas de Zul\'Kahr. O portal colapsa, sugando o demônio de volta para a sua dimensão escura. O céu vermelho se dissipa, revelando a noite em Itapema City.',
         cor: '#c8b8ff',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
     {
         personagem: 'Estelar',
         fala: 'Glorioso! Sabíamos que vocês conseguiriam!',
         cor: '#ffd166',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
     {
         personagem: 'Ravena',
         fala: 'Obrigada, Mutávio... e obrigado a todos. Vocês chegaram bem na hora.',
         cor: '#b388ff',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
     {
         personagem: 'Pedrion',
         fala: 'Excelente trabalho, Titãs! Kreftalad conteve o Doutor Solaris, Daviborg salvou nossos sistemas, eu enfrentei o General Shade e o Mutávio garantiu a nossa vitória final.',
         cor: '#4fc3f7',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
     {
         personagem: 'Daviborg',
         fala: 'É isso aí! Ninguém mexe com a nossa Torre e sai ileso! O que acham de comemorarmos com uma disputa de videogame e muita pizza?',
         cor: '#81c784',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
     {
         personagem: 'Mutávio',
         fala: 'Desde que a pizza seja vegetariana, eu topo na hora! Ganhamos o dia, galera!',
         cor: '#66ff66',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
     {
         personagem: 'Narrador',
         fala: 'E assim, trabalhando em equipe e confiando na liderança e nas habilidades de cada um, os Jovens Titãs salvaram as meninas, protegeram sua casa e trouxeram a paz de volta para Jump City.',
         cor: '#c8b8ff',
-        fundo: 'torre_final'
+        fundo: 'lutaFinal_vitoria'
     },
 ]
  
@@ -470,12 +448,6 @@ document.getElementById('des').addEventListener('click', (e) => {
         // Botão "Menu Principal" (centro 600, y ~612)
         if (btn(600, 630, 240, 35)) tela = 'menu'
     }
-    if (tela === 'vitoria_fase4') {
-        // Botão "Continuar" → leva ao diálogo final (epílogo)
-        if (btn(600, 555, 340, 52)) iniciar_cutscene_pos_luta_fase4()
-        // Botão "Menu Principal" (centro 600, y ~612)
-        if (btn(600, 630, 240, 35)) tela = 'menu'
-    }
     if (tela === 'vitoria') {
         // Tela final (telas.desenha_vitoria): "JOGAR NOVAMENTE" e "MENU"
         if (btn(600, 430)) iniciar_cutscene_intro()
@@ -544,7 +516,7 @@ function verificar_estado() {
     if (vilao.vida <= 0)  {
         if      (fase === 2) iniciar_cutscene_pos_luta_fase2()
         else if (fase === 3) iniciar_cutscene_pos_luta_fase3()
-        else if (fase === 4) tela = 'vitoria_fase4' // <── mostra a tela de vitória antes do diálogo final
+        else if (fase === 4) iniciar_cutscene_pos_luta_fase4()
         else iniciar_cutscene_pos_luta()
     }
 }
@@ -571,31 +543,53 @@ function desenha_fundo_luta() {
 //  TELA DE VITÓRIA FASE 1
 // ═══════════════════════════════════════════════════════════════
 function desenha_vitoria_fase1() {
-    // Fundo = imagem de vitória (mantém a proporção original da arte, sem esticar)
-    let img = IMG.vitoria
-    if (img.complete && img.naturalWidth > 0) {
-        let imgH = 1200 * (img.naturalHeight / img.naturalWidth)
-        des.fillStyle = '#0a1a30'
-        des.fillRect(0, 0, 1200, 700)
-        des.drawImage(img, 0, 0, 1200, imgH)
-        // Transição suave da arte para o painel inferior
-        let fade = des.createLinearGradient(0, imgH - 90, 0, imgH)
-        fade.addColorStop(0, 'rgba(10,26,48,0)')
-        fade.addColorStop(1, 'rgba(10,26,48,1)')
-        des.fillStyle = fade
-        des.fillRect(0, imgH - 90, 1200, 90)
+    // Fundo = imagem de vitória
+    if (IMG.vitoria.complete && IMG.vitoria.naturalWidth > 0) {
+        des.drawImage(IMG.vitoria, 0, 0, 1200, 700)
     } else {
         des.fillStyle = '#0a1a30'
         des.fillRect(0, 0, 1200, 700)
     }
-
+    des.fillStyle = 'rgba(0,0,0,0.40)'
+    des.fillRect(0, 0, 1200, 700)
+ 
+    // ── TÍTULO VITÓRIA ─────────────────────────────────────
     des.textAlign = 'center'
-
+ 
+    // Sombra título
+    des.font      = 'bold 64px "Press Start 2P"'
+    des.fillStyle = '#3a2000'
+    des.fillText('VITÓRIA!', 603, 154)
+    // Dourado pulsante
+    let ab = 0.75 + 0.25 * Math.abs(Math.sin(Date.now() / 500))
+    des.fillStyle = `rgba(255,210,0,${ab})`
+    des.fillText('VITÓRIA!', 600, 151)
+ 
+    // Subtítulo
+    des.font      = '21px "Press Start 2P"'
+    des.fillStyle = '#ffe055'
+    des.fillText('DOUTOR SOLARIS DERROTADO!', 600, 205)
+ 
+    des.font      = '12px "Press Start 2P"'
+    des.fillStyle = 'rgba(255,255,255,0.85)'
+    des.fillText('Kreftalad garantiu o gerador costeiro.', 600, 245)
+ 
+    // Separador
+    des.strokeStyle = 'rgba(255,210,0,0.4)'
+    des.lineWidth   = 1.5
+    des.beginPath() ; des.moveTo(280,268) ; des.lineTo(920,268) ; des.stroke()
+ 
+    // Fala do vilão derrotado
+    des.font      = '11px "Press Start 2P"'
+    des.fillStyle = '#ff8844'
+    des.fillText('Doutor Solaris: "Heh... o plano nunca foi a cidade.', 600, 308)
+    des.fillText('O plano sempre foi... a Torre!"', 600, 334)
+ 
     // ── BOTÃO PRÓXIMO DESAFIO ──────────────────────────────
-    let bx = 600, by = 534, bw = 360, bh = 52
+    let bx = 600, by = 504, bw = 360, bh = 52
     // Sombra
     des.fillStyle = '#0e2800'
-    des.fillRect(bx - bw/2 + 2, by - bh/2 + 2, bw, bh)
+    des.fillRect(bx - bw/2 + 4, by - bh/2 + 4, bw, bh)
     // Fundo
     des.fillStyle = '#1e5200'
     des.fillRect(bx - bw/2, by - bh/2, bw, bh)
@@ -612,10 +606,14 @@ function desenha_vitoria_fase1() {
     des.font         = '14px "Press Start 2P"'
     des.textBaseline = 'middle'
     des.fillText('▶  PRÓXIMO DESAFIO', bx, by)
+ 
+    des.fillStyle    = 'rgba(255,255,255,0.30)'
+    des.font         = '9px "Press Start 2P"'
     des.textBaseline = 'alphabetic'
-
+    des.fillText('(demais fases em breve)', 600, by + 42)
+ 
     // ── BOTÃO MENU PRINCIPAL ───────────────────────────────
-    let mx = 600, my = 616, mw = 270, mh = 38
+    let mx = 600, my = 600, mw = 270, mh = 38
     des.fillStyle   = 'rgba(255,255,255,0.08)'
     des.fillRect(mx - mw/2, my - mh/2, mw, mh)
     des.strokeStyle = 'rgba(255,255,255,0.28)'
@@ -626,7 +624,7 @@ function desenha_vitoria_fase1() {
     des.textBaseline = 'middle'
     des.fillText('MENU PRINCIPAL', mx, my)
     des.textBaseline = 'alphabetic'
-
+ 
     des.textAlign = 'left'
 }
 
@@ -634,31 +632,53 @@ function desenha_vitoria_fase1() {
 //  TELA DE VITÓRIA FASE 2
 // ═══════════════════════════════════════════════════════════════
 function desenha_vitoria_fase2() {
-    // Fundo = imagem de vitória (mantém a proporção original da arte, sem esticar)
-    let img2 = IMG.lab_vitoria
-    if (img2.complete && img2.naturalWidth > 0) {
-        let imgH2 = 1200 * (img2.naturalHeight / img2.naturalWidth)
-        des.fillStyle = '#0a1a30'
-        des.fillRect(0, 0, 1200, 700)
-        des.drawImage(img2, 0, 0, 1200, imgH2)
-        // Transição suave da arte para o painel inferior
-        let fade2 = des.createLinearGradient(0, imgH2 - 90, 0, imgH2)
-        fade2.addColorStop(0, 'rgba(10,26,48,0)')
-        fade2.addColorStop(1, 'rgba(10,26,48,1)')
-        des.fillStyle = fade2
-        des.fillRect(0, imgH2 - 90, 1200, 90)
+    // Fundo = imagem de vitória
+    if (IMG.lab_vitoria.complete && IMG.lab_vitoria.naturalWidth > 0) {
+        des.drawImage(IMG.lab_vitoria, 0, 0, 1200, 700)
     } else {
         des.fillStyle = '#0a1a30'
         des.fillRect(0, 0, 1200, 700)
     }
+    des.fillStyle = 'rgba(0,0,0,0.40)'
+    des.fillRect(0, 0, 1200, 700)
 
+    // ── TÍTULO VITÓRIA ─────────────────────────────────────
     des.textAlign = 'center'
 
+    // Sombra título
+    des.font      = 'bold 64px "Press Start 2P"'
+    des.fillStyle = '#3a2000'
+    des.fillText('VITÓRIA!', 603, 154)
+    // Dourado pulsante
+    let ab2 = 0.75 + 0.25 * Math.abs(Math.sin(Date.now() / 500))
+    des.fillStyle = `rgba(255,210,0,${ab2})`
+    des.fillText('VITÓRIA!', 600, 151)
+
+    // Subtítulo
+    des.font      = '21px "Press Start 2P"'
+    des.fillStyle = '#ffe055'
+    des.fillText('SENHOR X DERROTADO!', 600, 205)
+
+    des.font      = '12px "Press Start 2P"'
+    des.fillStyle = 'rgba(255,255,255,0.85)'
+    des.fillText('Daviborg garantiu o processador quântico.', 600, 245)
+
+    // Separador
+    des.strokeStyle = 'rgba(255,210,0,0.4)'
+    des.lineWidth   = 1.5
+    des.beginPath() ; des.moveTo(280,268) ; des.lineTo(920,268) ; des.stroke()
+
+    // Fala do vilão derrotado
+    des.font      = '11px "Press Start 2P"'
+    des.fillStyle = '#ff8844'
+    des.fillText('Senhor X: "Você defendeu seus computadores, Daviborg...', 600, 308)
+    des.fillText('mas o General Shade já subiu atrás do seu líder!"', 600, 334)
+
     // ── BOTÃO PRÓXIMO DESAFIO ──────────────────────────────
-    let bx2 = 600, by2 = 534, bw2 = 360, bh2 = 52
+    let bx2 = 600, by2 = 504, bw2 = 360, bh2 = 52
     // Sombra
     des.fillStyle = '#0e2800'
-    des.fillRect(bx2 - bw2/2 + 2, by2 - bh2/2 + 2, bw2, bh2)
+    des.fillRect(bx2 - bw2/2 + 4, by2 - bh2/2 + 4, bw2, bh2)
     // Fundo
     des.fillStyle = '#1e5200'
     des.fillRect(bx2 - bw2/2, by2 - bh2/2, bw2, bh2)
@@ -675,10 +695,14 @@ function desenha_vitoria_fase2() {
     des.font         = '14px "Press Start 2P"'
     des.textBaseline = 'middle'
     des.fillText('▶  PRÓXIMO DESAFIO', bx2, by2)
+
+    des.fillStyle    = 'rgba(255,255,255,0.30)'
+    des.font         = '9px "Press Start 2P"'
     des.textBaseline = 'alphabetic'
+    des.fillText('(demais fases em breve)', 600, by2 + 42)
 
     // ── BOTÃO MENU PRINCIPAL ───────────────────────────────
-    let mx2 = 600, my2 = 616, mw2 = 270, mh2 = 38
+    let mx2 = 600, my2 = 600, mw2 = 270, mh2 = 38
     des.fillStyle   = 'rgba(255,255,255,0.08)'
     des.fillRect(mx2 - mw2/2, my2 - mh2/2, mw2, mh2)
     des.strokeStyle = 'rgba(255,255,255,0.28)'
@@ -697,31 +721,53 @@ function desenha_vitoria_fase2() {
 //  TELA DE VITÓRIA FASE 3
 // ═══════════════════════════════════════════════════════════════
 function desenha_vitoria_fase3() {
-    // Fundo = imagem de vitória (mantém a proporção original da arte, sem esticar)
-    let img3 = IMG.cobertura_vitoria
-    if (img3.complete && img3.naturalWidth > 0) {
-        let imgH3 = 1200 * (img3.naturalHeight / img3.naturalWidth)
-        des.fillStyle = '#0a1a30'
-        des.fillRect(0, 0, 1200, 700)
-        des.drawImage(img3, 0, 0, 1200, imgH3)
-        // Transição suave da arte para o painel inferior
-        let fade3 = des.createLinearGradient(0, imgH3 - 90, 0, imgH3)
-        fade3.addColorStop(0, 'rgba(10,26,48,0)')
-        fade3.addColorStop(1, 'rgba(10,26,48,1)')
-        des.fillStyle = fade3
-        des.fillRect(0, imgH3 - 90, 1200, 90)
+    // Fundo = imagem de vitória
+    if (IMG.cobertura_vitoria.complete && IMG.cobertura_vitoria.naturalWidth > 0) {
+        des.drawImage(IMG.cobertura_vitoria, 0, 0, 1200, 700)
     } else {
         des.fillStyle = '#0a1a30'
         des.fillRect(0, 0, 1200, 700)
     }
+    des.fillStyle = 'rgba(0,0,0,0.40)'
+    des.fillRect(0, 0, 1200, 700)
 
+    // ── TÍTULO VITÓRIA ─────────────────────────────────────
     des.textAlign = 'center'
 
+    // Sombra título
+    des.font      = 'bold 64px "Press Start 2P"'
+    des.fillStyle = '#3a2000'
+    des.fillText('VITÓRIA!', 603, 154)
+    // Dourado pulsante
+    let ab3 = 0.75 + 0.25 * Math.abs(Math.sin(Date.now() / 500))
+    des.fillStyle = `rgba(255,210,0,${ab3})`
+    des.fillText('VITÓRIA!', 600, 151)
+
+    // Subtítulo
+    des.font      = '21px "Press Start 2P"'
+    des.fillStyle = '#ffe055'
+    des.fillText('GENERAL SHADE DERROTADO!', 600, 205)
+
+    des.font      = '12px "Press Start 2P"'
+    des.fillStyle = 'rgba(255,255,255,0.85)'
+    des.fillText('Pedrion garantiu a segurança da Torre.', 600, 245)
+
+    // Separador
+    des.strokeStyle = 'rgba(255,210,0,0.4)'
+    des.lineWidth   = 1.5
+    des.beginPath() ; des.moveTo(280,268) ; des.lineTo(920,268) ; des.stroke()
+
+    // Fala do vilão derrotado
+    des.font      = '11px "Press Start 2P"'
+    des.fillStyle = '#ff8844'
+    des.fillText('General Shade: "Você falhou, Pedrion... olhe para o céu.', 600, 308)
+    des.fillText('Eu fui apenas o peão do verdadeiro fim."', 600, 334)
+
     // ── BOTÃO PRÓXIMO DESAFIO ──────────────────────────────
-    let bx3 = 600, by3 = 534, bw3 = 360, bh3 = 52
+    let bx3 = 600, by3 = 504, bw3 = 360, bh3 = 52
     // Sombra
     des.fillStyle = '#0e2800'
-    des.fillRect(bx3 - bw3/2 + 2, by3 - bh3/2 + 2, bw3, bh3)
+    des.fillRect(bx3 - bw3/2 + 4, by3 - bh3/2 + 4, bw3, bh3)
     // Fundo
     des.fillStyle = '#1e5200'
     des.fillRect(bx3 - bw3/2, by3 - bh3/2, bw3, bh3)
@@ -738,10 +784,14 @@ function desenha_vitoria_fase3() {
     des.font         = '14px "Press Start 2P"'
     des.textBaseline = 'middle'
     des.fillText('▶  PRÓXIMO DESAFIO', bx3, by3)
+
+    des.fillStyle    = 'rgba(255,255,255,0.30)'
+    des.font         = '9px "Press Start 2P"'
     des.textBaseline = 'alphabetic'
+    des.fillText('(fase final: o Chefão Apocalíptico)', 600, by3 + 42)
 
     // ── BOTÃO MENU PRINCIPAL ───────────────────────────────
-    let mx3 = 600, my3 = 616, mw3 = 270, mh3 = 38
+    let mx3 = 600, my3 = 600, mw3 = 270, mh3 = 38
     des.fillStyle   = 'rgba(255,255,255,0.08)'
     des.fillRect(mx3 - mw3/2, my3 - mh3/2, mw3, mh3)
     des.strokeStyle = 'rgba(255,255,255,0.28)'
@@ -751,69 +801,6 @@ function desenha_vitoria_fase3() {
     des.font         = '10px "Press Start 2P"'
     des.textBaseline = 'middle'
     des.fillText('MENU PRINCIPAL', mx3, my3)
-    des.textBaseline = 'alphabetic'
-
-    des.textAlign = 'left'
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  TELA DE VITÓRIA FASE 4 (FINAL)
-// ═══════════════════════════════════════════════════════════════
-function desenha_vitoria_fase4() {
-    // Fundo = imagem de vitória (mantém a proporção original da arte, sem esticar)
-    let img4 = IMG.lutaFinal_vitoria
-    if (img4.complete && img4.naturalWidth > 0) {
-        let imgH4 = 1200 * (img4.naturalHeight / img4.naturalWidth)
-        des.fillStyle = '#0a1a30'
-        des.fillRect(0, 0, 1200, 700)
-        des.drawImage(img4, 0, 0, 1200, imgH4)
-        // Transição suave da arte para o painel inferior
-        let fade4 = des.createLinearGradient(0, imgH4 - 90, 0, imgH4)
-        fade4.addColorStop(0, 'rgba(10,26,48,0)')
-        fade4.addColorStop(1, 'rgba(10,26,48,1)')
-        des.fillStyle = fade4
-        des.fillRect(0, imgH4 - 90, 1200, 90)
-    } else {
-        des.fillStyle = '#0a1a30'
-        des.fillRect(0, 0, 1200, 700)
-    }
-
-    des.textAlign = 'center'
-
-    // ── BOTÃO CONTINUAR (leva ao diálogo final) ────────────
-    let bx4 = 600, by4 = 534, bw4 = 360, bh4 = 52
-    // Sombra
-    des.fillStyle = '#0e2800'
-    des.fillRect(bx4 - bw4/2 + 2, by4 - bh4/2 + 2, bw4, bh4)
-    // Fundo
-    des.fillStyle = '#1e5200'
-    des.fillRect(bx4 - bw4/2, by4 - bh4/2, bw4, bh4)
-    // Brilho topo
-    des.fillStyle = 'rgba(255,255,255,0.10)'
-    des.fillRect(bx4 - bw4/2, by4 - bh4/2, bw4, 10)
-    // Borda
-    des.strokeStyle = '#55ff22'
-    des.lineWidth   = 2
-    des.strokeRect(bx4 - bw4/2, by4 - bh4/2, bw4, bh4)
-    // Texto pulsante
-    let ap4 = 0.7 + 0.3 * Math.abs(Math.sin(Date.now() / 400))
-    des.fillStyle    = `rgba(140,255,70,${ap4})`
-    des.font         = '14px "Press Start 2P"'
-    des.textBaseline = 'middle'
-    des.fillText('▶  CONTINUAR', bx4, by4)
-    des.textBaseline = 'alphabetic'
-
-    // ── BOTÃO MENU PRINCIPAL ───────────────────────────────
-    let mx4 = 600, my4 = 616, mw4 = 270, mh4 = 38
-    des.fillStyle   = 'rgba(255,255,255,0.08)'
-    des.fillRect(mx4 - mw4/2, my4 - mh4/2, mw4, mh4)
-    des.strokeStyle = 'rgba(255,255,255,0.28)'
-    des.lineWidth   = 1
-    des.strokeRect(mx4 - mw4/2, my4 - mh4/2, mw4, mh4)
-    des.fillStyle    = 'rgba(255,255,255,0.6)'
-    des.font         = '10px "Press Start 2P"'
-    des.textBaseline = 'middle'
-    des.fillText('MENU PRINCIPAL', mx4, my4)
     des.textBaseline = 'alphabetic'
 
     des.textAlign = 'left'
@@ -832,7 +819,6 @@ function desenha() {
     else if (tela === 'vitoria_fase1') desenha_vitoria_fase1()
     else if (tela === 'vitoria_fase2') desenha_vitoria_fase2()
     else if (tela === 'vitoria_fase3') desenha_vitoria_fase3()
-    else if (tela === 'vitoria_fase4') desenha_vitoria_fase4()
     else if (tela === 'vitoria')       telas.desenha_vitoria()
     else if (tela === 'derrota')       telas.desenha_derrota(fase)
     else if (tela === 'jogando') {
