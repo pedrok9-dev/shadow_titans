@@ -42,9 +42,7 @@ class Tiro extends Obj {
     des_tiro() {
         if (!this.ativo) return
 
-        if (this.dono === 'heroi') { // <── troque este bloco por des.drawImage(...) para usar um sprite no tiro do herói
-            // Tiro do herói: projétil azul ciano com brilho
-            // Núcleo brilhante
+        if (this.dono === 'heroi') { 
             des.fillStyle = '#ffffff'
             des.fillRect(this.x + 4, this.y + 1, 6, 4)
 
@@ -60,9 +58,7 @@ class Tiro extends Obj {
             des.fillStyle = 'rgba(255,255,255,0.6)'
             des.fillRect(this.x + this.w - 4, this.y + 1, 4, 4)
 
-        } else { // <── troque este bloco por des.drawImage(...) para usar um sprite no tiro do vilão
-            // Tiro do vilão: projétil vermelho com rastro
-            // Rastro
+        } else { 
             des.fillStyle = 'rgba(255, 50, 0, 0.35)'
             des.fillRect(this.x + this.w - 2, this.y + 1, 10, 4)
 

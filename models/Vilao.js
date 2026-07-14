@@ -6,6 +6,7 @@ class Vilao extends Obj {
         this.velY = 1.5
         this.timerTiro = 0
         this.intervalTiro = 80 // frames entre rajadas
+        this.timerMostraAtirando = 0 // <── frames restantes mostrando o sprite de atirando
     }
 
     mov() {
@@ -20,19 +21,53 @@ class Vilao extends Obj {
             this.velY *= -1
         }
         if (this.timerTiro > 0) this.timerTiro--
+        if (this.timerMostraAtirando > 0) this.timerMostraAtirando--
     }
 
     // Retorna true se é hora de atirar
     podeAtirar() {
         if (this.timerTiro <= 0) {
             this.timerTiro = this.intervalTiro
+            this.timerMostraAtirando = 18 // <── frames que o sprite de atirando fica visível
             return true
         }
         return false
     }
 
     // Desenha o vilão - figura robótica maligna / vilão
-    des_vilao() { // <── troque o conteúdo deste método por des.drawImage(...) para usar um sprite do vilão
+    des_vilao() {
+        // <── escolhe o sprite do vilão conforme a fase (Doutor Solaris, Senhor X, General Shade)
+        let parados = null, atirando = null
+        if (fase === 1) {
+            parados  = [IMG.vilao_fase1_parado1, IMG.vilao_fase1_parado2, IMG.vilao_fase1_parado3]
+            atirando = IMG.vilao_fase1_atirando
+        } else if (fase === 2) {
+            parados  = [IMG.vilao_fase2_parado1, IMG.vilao_fase2_parado2, IMG.vilao_fase2_parado3]
+            atirando = IMG.vilao_fase2_atirando
+        } else if (fase === 3) {
+            parados  = [IMG.vilao_fase3_parado1, IMG.vilao_fase3_parado2, IMG.vilao_fase3_parado3]
+            atirando = IMG.vilao_fase3_atirando
+        } else if (fase === 4) {
+            parados  = [IMG.vilao_fase4_parado1, IMG.vilao_fase4_parado2, IMG.vilao_fase4_parado3]
+            atirando = IMG.vilao_fase4_atirando
+        }
+
+        let quadro = null
+        if (parados) {
+            quadro = (this.timerMostraAtirando > 0)
+                ? atirando
+                : parados[Math.floor(Date.now() / 220) % parados.length]
+        }
+
+        if (quadro && quadro.complete && quadro.naturalWidth > 0) {
+            let sw = this.w * 1.8, sh = this.h * 1.8
+            let cx0 = this.x + this.w / 2
+            let cy0 = this.y + this.h / 2
+            des.drawImage(quadro, cx0 - sw / 2, cy0 - sh / 2, sw, sh)
+            return
+        }
+
+        // Fallback (sprite ainda não carregado ou fase sem sprite próprio): desenho original
         let cx = this.x + this.w / 2
         let cy = this.y + this.h / 2
 
