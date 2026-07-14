@@ -87,13 +87,20 @@ class Heroi extends Obj {
             }
 
             if (img) {
+                // <── aumenta o sprite desenhado (sem alterar a hitbox de colisão/movimento)
+                //     para ficar com tamanho próximo ao do vilão
+                let ESCALA = 1.4
+                let sw = this.w * ESCALA, sh = this.h * ESCALA
+                let cx0 = this.x + this.w / 2, cy0 = this.y + this.h / 2
+                let dx = cx0 - sw / 2, dy = cy0 - sh / 2
+
                 des.save()
                 if (this.olhandoEsquerda) {
-                    des.translate(this.x + this.w, this.y)
+                    des.translate(dx + sw, dy)
                     des.scale(-1, 1)
-                    des.drawImage(img, 0, 0, this.w, this.h)
+                    des.drawImage(img, 0, 0, sw, sh)
                 } else {
-                    des.drawImage(img, this.x, this.y, this.w, this.h)
+                    des.drawImage(img, dx, dy, sw, sh)
                 }
                 des.restore()
                 return
