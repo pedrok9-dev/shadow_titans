@@ -10,6 +10,7 @@ class Heroi extends Obj {
         this.animFrame = 0
         this.animTimer = 0
         this.olhandoEsquerda = false
+        this.timerSpriteAtirando = 0 // <── frames restantes mostrando o sprite "atirando" (modo 1 V 1)
     }
 
     mov() {
@@ -30,10 +31,31 @@ class Heroi extends Obj {
             this.animTimer = 0
             this.animFrame++
         }
+
+        if (this.timerSpriteAtirando > 0) this.timerSpriteAtirando--
     }
 
     // Desenha o herói usando os sprites do personagem da fase atual
     des_heroi() {
+        // <── MODO 1 V 1: usa os sprites do personagem escolhido na seleção, sem
+        //     mexer no desenho por fase usado no modo história (abaixo)
+        if (typeof modo1v1 !== 'undefined' && modo1v1 && typeof sel1v1 !== 'undefined' && sel1v1.heroi) {
+            let sprites = SPRITES_1V1[sel1v1.heroi]
+            if (sprites) {
+                let img
+                if (this.timerSpriteAtirando > 0 && sprite_ok(sprites.atirando)) {
+                    img = sprites.atirando
+                } else {
+                    let quadro = Math.floor(frameSprite1v1 / 20) % 2 === 0 ? sprites.parado1 : sprites.parado2
+                    img = sprite_ok(quadro) ? quadro : (sprite_ok(sprites.parado1) ? sprites.parado1 : sprites.parado2)
+                }
+                if (sprite_ok(img)) {
+                    des.drawImage(img, this.x, this.y, this.w, this.h)
+                    return
+                }
+            }
+        }
+
         // <── conjuntos de sprites por fase: Fase 1 = Kreftalad, Fase 2 = Daviborg, Fase 3 = Pedrion, Fase 4 = Mutávio
         let configs = {
             1: {

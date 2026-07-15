@@ -7,6 +7,12 @@ class Vilao extends Obj {
         this.timerTiro = 0
         this.intervalTiro = 80 // frames entre rajadas
         this.timerMostraAtirando = 0 // <── frames restantes mostrando o sprite de atirando
+
+        // Controle pelo Jogador 2 (modo 1 V 1) — apenas movimento vertical
+        this.dirY = 0
+        this.velJogador = 5
+        this.cooldownTiro = 0
+        this.timerSpriteAtirando = 0 // <── frames restantes mostrando o sprite "atirando" (modo 1 V 1)
     }
 
     mov() {
@@ -24,6 +30,18 @@ class Vilao extends Obj {
         if (this.timerMostraAtirando > 0) this.timerMostraAtirando--
     }
 
+    // Movimento do Jogador 2 no modo 1 V 1: somente para cima/baixo (sem esquerda/direita)
+    mov_jogador() {
+        this.y += this.dirY * this.velJogador
+
+        // Limites da tela (apenas eixo vertical)
+        if (this.y < 0) this.y = 0
+        if (this.y > 700 - this.h) this.y = 700 - this.h
+
+        if (this.cooldownTiro > 0) this.cooldownTiro--
+        if (this.timerSpriteAtirando > 0) this.timerSpriteAtirando--
+    }
+
     // Retorna true se é hora de atirar
     podeAtirar() {
         if (this.timerTiro <= 0) {
@@ -36,6 +54,25 @@ class Vilao extends Obj {
 
     // Desenha o vilão - figura robótica maligna / vilão
     des_vilao() {
+        // <── MODO 1 V 1: usa os sprites do personagem escolhido na seleção, sem
+        //     mexer no desenho por fase usado no modo história (abaixo)
+        if (typeof modo1v1 !== 'undefined' && modo1v1 && typeof sel1v1 !== 'undefined' && sel1v1.vilao) {
+            let sprites = SPRITES_1V1[sel1v1.vilao]
+            if (sprites) {
+                let img
+                if (this.timerSpriteAtirando > 0 && sprite_ok(sprites.atirando)) {
+                    img = sprites.atirando
+                } else {
+                    let quadro = Math.floor(frameSprite1v1 / 20) % 2 === 0 ? sprites.parado1 : sprites.parado2
+                    img = sprite_ok(quadro) ? quadro : (sprite_ok(sprites.parado1) ? sprites.parado1 : sprites.parado2)
+                }
+                if (sprite_ok(img)) {
+                    des.drawImage(img, this.x, this.y, this.w, this.h)
+                    return
+                }
+            }
+        }
+
         // <── escolhe o sprite do vilão conforme a fase (Doutor Solaris, Senhor X, General Shade)
         let parados = null, atirando = null
         if (fase === 1) {
