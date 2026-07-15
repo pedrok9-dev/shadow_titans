@@ -71,8 +71,9 @@ class Telas {
         des.textAlign = 'center'
 
         this._botao('▶  JOGAR', 600, 285, '#5c00c7', '#2e0060')
-        this._botao('📖  MANUAL', 600, 375, '#00609c', '#003050')
-        this._botao('ℹ️  SOBRE', 600, 465, '#006040', '#002a1a')
+        this._botao('⚔️  1 V 1', 600, 375, '#a30030', '#4a0016')
+        this._botao('📖  MANUAL', 600, 465, '#00609c', '#003050')
+        this._botao('ℹ️  SOBRE', 600, 555, '#006040', '#002a1a')
 
         des.textAlign = 'left'
     }
@@ -185,8 +186,131 @@ class Telas {
         des.textAlign = 'left'
     }
 
+    // ─── SELEÇÃO 1 V 1 ──────────────────────────────────────────────
+    // colX: centro X da coluna | lista: array de nomes (4 itens, grade 2x2) | selecionado: nome escolhido
+    _grade_selecao(colX, lista, selecionado, corTema) {
+        let itemW = 220, itemH = 240, gap = 20
+        let gridW = itemW * 2 + gap
+        let startX = colX - gridW / 2
+        let startY = 110
+        let fotoMargem = 14
+        let fotoTam = itemW - fotoMargem * 2 // quadrado grande da foto
+
+        lista.forEach((nome, i) => {
+            let col = i % 2
+            let row = Math.floor(i / 2)
+            let boxX = startX + col * (itemW + gap)
+            let boxY = startY + row * (itemH + gap)
+            let ativo = nome === selecionado
+
+            des.fillStyle = ativo ? corTema : 'rgba(255,255,255,0.06)'
+            des.fillRect(boxX, boxY, itemW, itemH)
+            des.strokeStyle = ativo ? 'white' : corTema
+            des.lineWidth = ativo ? 4 : 2
+            des.strokeRect(boxX, boxY, itemW, itemH)
+
+            // ─ Foto do personagem (ou placeholder cinza se ainda não existir) ─
+            let fotoX = boxX + fotoMargem, fotoY = boxY + fotoMargem
+            let img = typeof IMG_PERSONAGENS !== 'undefined' ? IMG_PERSONAGENS[nome] : null
+
+            if (img && img.complete && img.naturalWidth > 0) {
+                des.drawImage(img, fotoX, fotoY, fotoTam, fotoTam)
+                des.strokeStyle = 'rgba(255,255,255,0.5)'
+                des.lineWidth = 1.5
+                des.strokeRect(fotoX, fotoY, fotoTam, fotoTam)
+            } else {
+                des.fillStyle = 'rgba(255,255,255,0.15)'
+                des.fillRect(fotoX, fotoY, fotoTam, fotoTam)
+                des.strokeStyle = 'rgba(255,255,255,0.5)'
+                des.lineWidth = 1.5
+                des.strokeRect(fotoX, fotoY, fotoTam, fotoTam)
+                des.fillStyle = 'rgba(255,255,255,0.35)'
+                des.font = '11px "Press Start 2P"'
+                des.textAlign = 'center'
+                des.textBaseline = 'middle'
+                des.fillText('foto', fotoX + fotoTam / 2, fotoY + fotoTam / 2)
+            }
+
+            // Nome do personagem (faixa inferior do card)
+            des.fillStyle = ativo ? '#fff' : 'rgba(255,255,255,0.9)'
+            des.font = '9px "Press Start 2P"'
+            des.textAlign = 'center'
+            des.textBaseline = 'middle'
+            des.fillText(nome, boxX + itemW / 2, fotoY + fotoTam + (itemH - fotoMargem - fotoTam) / 2)
+        })
+        des.textAlign = 'left'
+        des.textBaseline = 'alphabetic'
+    }
+
+    desenha_selecao_1v1(listaViloes, listaHerois, selVilao, selHeroi) {
+        this._fundo_menu()
+
+        des.font = 'bold 22px "Press Start 2P"'
+        des.textAlign = 'center'
+        des.fillStyle = '#4a0010'
+        des.fillText('⚔️ SELEÇÃO 1 V 1', 603, 33)
+        des.fillStyle = '#ff5577'
+        des.fillText('⚔️ SELEÇÃO 1 V 1', 600, 30)
+
+        // Cabeçalhos das colunas (heróis à esquerda, vilões à direita)
+        des.font = '12px "Press Start 2P"'
+        des.fillStyle = '#66aaff'
+        des.fillText('JOGADOR 1 — HERÓI', 300, 72)
+        des.fillStyle = '#ffaa66'
+        des.fillText('JOGADOR 2 — VILÃO', 900, 72)
+
+        // Dica de controles de cada jogador (apenas cima/baixo)
+        des.font = '9px "Press Start 2P"'
+        des.fillStyle = '#aaccff'
+        des.fillText('W / S move · ESPAÇO atira', 300, 90)
+        des.fillStyle = '#ffccaa'
+        des.fillText('↑ / ↓ move · P atira', 900, 90)
+
+        this._grade_selecao(300, listaHerois, selHeroi, '#0050a0')
+        this._grade_selecao(900, listaViloes, selVilao, '#a30030')
+
+        // Botão VOLTAR
+        this._botao('VOLTAR', 300, 665, '#444', '#222')
+
+        // Botão COMEÇAR (esmaecido até ambos escolherem)
+        let prontos = selVilao && selHeroi
+        this._botao('COMEÇAR', 900, 665, prontos ? '#1e5200' : '#333', prontos ? '#0e2800' : '#1a1a1a')
+
+        des.textAlign = 'left'
+    }
+
+    // ─── FINAL 1 V 1 ────────────────────────────────────────────────
+    desenha_final_1v1(venceu, nomeHeroi, nomeVilao) {
+        this._fundo_menu()
+
+        des.fillStyle = venceu ? 'rgba(140,80,255,0.08)' : 'rgba(150,0,0,0.08)'
+        des.beginPath()
+        des.arc(600, 220, 220, 0, Math.PI * 2)
+        des.fill()
+
+        let a = 0.6 + 0.4 * Math.abs(Math.sin(Date.now() / 600))
+        des.font = '38px "Press Start 2P"'
+        des.textAlign = 'center'
+        des.fillStyle = venceu ? '#3a0080' : '#4a0000'
+        des.fillText(venceu ? '🏆 VITÓRIA!' : 'GAME OVER', 603, 223)
+        des.fillStyle = venceu ? `rgba(160,100,255,${a})` : `rgba(255,50,50,${a})`
+        des.fillText(venceu ? '🏆 VITÓRIA!' : 'GAME OVER', 600, 220)
+
+        des.fillStyle = 'rgba(255,255,255,0.7)'
+        des.font = '11px "Press Start 2P"'
+        des.fillText(
+            venceu ? `${nomeHeroi} derrotou ${nomeVilao}!` : `${nomeVilao} derrotou ${nomeHeroi}!`,
+            600, 300
+        )
+
+        this._botao('JOGAR NOVAMENTE', 600, 430, '#5c00c7', '#2e0060')
+        this._botao('MENU', 600, 520, '#006040', '#002a1a')
+
+        des.textAlign = 'left'
+    }
+
     // ─── HUD ──────────────────────────────────────────────────────
-    desenha_hud(heroi, vilao, fase) {
+    desenha_hud(heroi, vilao, fase, nomeHeroi, nomeVilao) {
         // Barra superior semitransparente
         des.fillStyle = 'rgba(0,0,0,0.55)'
         des.fillRect(0, 0, 1200, 60)
@@ -195,7 +319,7 @@ class Telas {
         des.fillStyle = '#a060ff'
         des.font = '10px "Press Start 2P"'
         des.textAlign = 'left'
-        des.fillText('HERÓI', 15, 18)
+        des.fillText(nomeHeroi ? nomeHeroi.toUpperCase() : 'HERÓI', 15, 18)
 
         let largBarra = 220
         let barraX = 15
@@ -220,13 +344,13 @@ class Telas {
         des.fillStyle = 'white'
         des.font = '14px "Press Start 2P"'
         des.textAlign = 'center'
-        des.fillText('FASE ' + fase, 600, 38)
+        des.fillText(nomeHeroi ? '1 V 1' : 'FASE ' + fase, 600, 38)
 
         // == BARRA DE VIDA VILÃO ==
         des.fillStyle = '#ff4444'
         des.font = '10px "Press Start 2P"'
         des.textAlign = 'right'
-        des.fillText('VILÃO', 1185, 18)
+        des.fillText(nomeVilao ? nomeVilao.toUpperCase() : 'VILÃO', 1185, 18)
 
         let barraVX = 1185 - largBarra
         // fundo
