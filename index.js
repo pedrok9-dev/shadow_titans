@@ -46,8 +46,7 @@ let IMG = {}
     ['mutavio_correndo1', 'img/paulo_correndo_01.png'], 
     ['mutavio_correndo2', 'img/paulo_correndo_02.png'], 
     ['mutavio_atirando',  'img/paulo_atirando_01.png'], 
-    ['tiro_mutavio1',     'img/paulo_tiro_01.png'], 
-    
+    ['tiro_mutavio1',     'img/paulo_tiro_01.png'],   
 ].forEach(([k, src]) => {
     IMG[k] = new Image()
     IMG[k].src = src
