@@ -46,6 +46,34 @@ let IMG = {}
     ['mutavio_correndo2', 'img/paulo_correndo_02.png'], 
     ['mutavio_atirando',  'img/paulo_atirando_01.png'], 
     ['tiro_mutavio1',     'img/paulo_tiro_01.png'], 
+
+    // ── Vilão Fase 1: Doutor Solaris ──
+    ['vilao_fase1_parado1',  'img/doutor_luz_parado_01.png'],
+    ['vilao_fase1_parado2',  'img/doutor_luz_parado_02.png'],
+    ['vilao_fase1_parado3',  'img/doutor_luz_parado_03.png'],
+    ['vilao_fase1_atirando', 'img/doutor_luz_atirando_01.png'],
+    ['tiro_vilao_fase1',     'img/doutor_luz_tiro01.png'],
+
+    // ── Vilão Fase 2: Senhor X ──
+    ['vilao_fase2_parado1',  'img/senhorX_parado_01.png'],
+    ['vilao_fase2_parado2',  'img/senhorX_parado_02.png'],
+    ['vilao_fase2_parado3',  'img/senhorX_parado_03.png'],
+    ['vilao_fase2_atirando', 'img/senhorX_atirando_01.png'],
+    ['tiro_vilao_fase2',     'img/senhorX_tiro01.png'],
+
+    // ── Vilão Fase 3: General Shade ──
+    ['vilao_fase3_parado1',  'img/shade_parado_01.png'],
+    ['vilao_fase3_parado2',  'img/shade_parado_02.png'],
+    ['vilao_fase3_parado3',  'img/shade_parado_03.png'],
+    ['vilao_fase3_atirando', 'img/shade_atirando01.png'],
+    ['tiro_vilao_fase3',     'img/shade_tiro01.png'],
+
+    // ── Vilão Fase 4: Zul'Kahr ──
+    ['vilao_fase4_parado1',  'img/zul_parado_01.png'],
+    ['vilao_fase4_parado2',  'img/zul_parado_02.png'],
+    ['vilao_fase4_parado3',  'img/zul_parado_03.png'],
+    ['vilao_fase4_atirando', 'img/zulkar_atirando_01.png'],
+    ['tiro_vilao_fase4',     'img/zul_tiro01.png'],
     
 ].forEach(([k, src]) => {
     IMG[k] = new Image()
@@ -65,7 +93,62 @@ let tirosVilao   = []
 let coletaveis   = []
 let timerCoracao = 0
 const INTERVALO_CORACAO = 480
- 
+
+// ═══════════════════════════════════════════════════════════════
+//  MODO 1 V 1
+// ═══════════════════════════════════════════════════════════════
+const VILOES_1V1 = ['Doutor Solaris', 'Senhor X', 'General Shade', 'Zul\'Kahr']
+const HEROIS_1V1 = ['Pedrion', 'Daviborg', 'Kreftalad', 'Mutávio']
+
+let modo1v1  = false
+let sel1v1   = { vilao: null, heroi: null }
+
+// Fotos dos personagens do 1 V 1
+let IMG_PERSONAGENS = {}
+;[
+    ['Pedrion',        'img/pedrion.png'],
+    ['Daviborg',       'img/daviborg.png'],
+    ['Kreftalad',      'img/kreftalad.png'],
+    ['Mutávio',        'img/mutavio.png'],
+    ['Doutor Solaris', 'img/doutor_solaris.png'],
+    ['Senhor X',       'img/senhor_x.png'],
+    ['General Shade',  'img/general_shade.png'],
+    ['Zul\'Kahr',      'img/zulkahr.png'],
+].forEach(([nome, src]) => {
+    IMG_PERSONAGENS[nome] = new Image()
+    IMG_PERSONAGENS[nome].src = src
+})
+
+// ─────────────────────────────────────────────────────────────
+// Sprites de LUTA do 1 V 1 (parado x2 + atirando x1) por personagem
+// ─────────────────────────────────────────────────────────────
+const SLUGS_1V1 = {
+    'Pedrion':        'pedrion',
+    'Daviborg':       'daviborg',
+    'Kreftalad':      'kreftalad',
+    'Mutávio':        'mutavio',
+    'Doutor Solaris': 'doutor_solaris',
+    'Senhor X':       'senhor_x',
+    'General Shade':  'general_shade',
+    'Zul\'Kahr':      'zulkahr',
+}
+
+let SPRITES_1V1 = {}
+Object.entries(SLUGS_1V1).forEach(([nome, slug]) => {
+    let parado1  = new Image() ; parado1.src  = `img/${slug}_parado1.png`
+    let parado2  = new Image() ; parado2.src  = `img/${slug}_parado2.png`
+    let atirando = new Image() ; atirando.src = `img/${slug}_atirando.png`
+    SPRITES_1V1[nome] = { parado1, parado2, atirando }
+})
+
+// Contador de quadros global, usado só pra alternar o sprite "parado" (anda 1 - 2) no 1 V 1
+let frameSprite1v1 = 0
+
+// Retorna true se a imagem já carregou de verdade (arquivo existe e não deu erro)
+function sprite_ok(img) {
+    return !!(img && img.complete && img.naturalWidth > 0)
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  ROTEIRO — Fase 1
 // ═══════════════════════════════════════════════════════════════
@@ -330,6 +413,27 @@ function iniciar_luta_fase4() {
     tela = 'jogando'
 }
  
+function iniciar_luta_1v1() {
+    heroi.x = 100 ; heroi.y = 300
+    heroi.vida = 5 ; heroi.vidaMax = 5
+    heroi.dirX = 0 ; heroi.dirY = 0
+    heroi.cooldownTiro = 0
+    heroi.timerSpriteAtirando = 0
+
+    vilao.x = 1050 ; vilao.y = 280
+    vilao.vida = 5 ; vilao.vidaMax = 5 // No 1 V 1 o vilão fica com 5 vidas, igual ao herói (no modo história continua 10)
+    vilao.velY = 3.5
+    vilao.timerTiro = 70 ; vilao.intervalTiro = 70
+    vilao.dirY = 0
+    vilao.cooldownTiro = 0
+    vilao.timerSpriteAtirando = 0
+
+    tirosHeroi = [] ; tirosVilao = [] ; coletaveis = []
+    timerCoracao = 0
+    modo1v1 = true
+    tela = 'jogando'
+}
+
 function iniciar_cutscene_intro() {
     tela = 'cutscene'
     cena.iniciar(FALAS_FASE1, IMG, () => {
@@ -391,10 +495,22 @@ function iniciar_cutscene_pos_luta_fase4() {
 // ═══════════════════════════════════════════════════════════════
 document.addEventListener('keydown', (e) => {
     if (tela === 'jogando') {
+        // Jogador 1 (Herói): W / S sempre disponíveis
         if (e.key === 'w' || e.key === 'W') heroi.dirY = -1
         if (e.key === 's' || e.key === 'S') heroi.dirY =  1
-        if (e.key === 'a' || e.key === 'A') heroi.dirX = -1
-        if (e.key === 'd' || e.key === 'D') heroi.dirX =  1
+
+        if (modo1v1) {
+            // No modo 1 V 1 ninguém se move para os lados — só para cima/baixo
+            // Jogador 2 (Vilão): Seta Cima / Seta Baixo para mover, P para atirar
+            if (e.key === 'ArrowUp')   { e.preventDefault(); vilao.dirY = -1 }
+            if (e.key === 'ArrowDown') { e.preventDefault(); vilao.dirY =  1 }
+            if (e.key === 'p' || e.key === 'P') { e.preventDefault(); atirar_vilao_jogador() }
+        } else {
+            // Modo história: Herói pode se mover livremente pelos 2 eixos
+            if (e.key === 'a' || e.key === 'A') heroi.dirX = -1
+            if (e.key === 'd' || e.key === 'D') heroi.dirX =  1
+        }
+
         if (e.key === ' ') { e.preventDefault(); atirar_heroi() }
     }
     if (tela === 'cutscene') {
@@ -406,6 +522,8 @@ document.addEventListener('keyup', (e) => {
     if (e.key === 's' || e.key === 'S') heroi.dirY = 0
     if (e.key === 'a' || e.key === 'A') heroi.dirX = 0
     if (e.key === 'd' || e.key === 'D') heroi.dirX = 0
+    if (e.key === 'ArrowUp')   vilao.dirY = 0
+    if (e.key === 'ArrowDown') vilao.dirY = 0
 })
  
 // ─── CLIQUE ───────────────────────────────────────────────────
@@ -422,11 +540,35 @@ document.getElementById('des').addEventListener('click', (e) => {
  
     if (tela === 'menu') {
         if (btn(600, 285)) iniciar_cutscene_intro()
-        if (btn(600, 375)) tela = 'manual'
-        if (btn(600, 465)) tela = 'sobre'
+        if (btn(600, 375)) { sel1v1 = { vilao: null, heroi: null } ; tela = 'selecao1v1' }
+        if (btn(600, 465)) tela = 'manual'
+        if (btn(600, 555)) tela = 'sobre'
     }
     if (tela === 'manual')  { if (btn(600, 665)) tela = 'menu' }
     if (tela === 'sobre')   { if (btn(600, 625)) tela = 'menu' }
+
+    if (tela === 'selecao1v1') {
+        // Grade 2x2 desenhada em _grade_selecao: cards de 220x240, gap 20, início y=110
+        function clicouCard(colX, i) {
+            let itemW = 220, itemH = 240, gap = 20
+            let gridW = itemW * 2 + gap
+            let startX = colX - gridW / 2
+            let startY = 110
+            let col = i % 2
+            let row = Math.floor(i / 2)
+            let boxX = startX + col * (itemW + gap)
+            let boxY = startY + row * (itemH + gap)
+            return cx > boxX && cx < boxX + itemW && cy > boxY && cy < boxY + itemH
+        }
+        // Coluna esquerda: escolha do herói (Jogador 1)
+        HEROIS_1V1.forEach((nome, i) => { if (clicouCard(300, i)) sel1v1.heroi = nome })
+        // Coluna direita: escolha do vilão (Jogador 2)
+        VILOES_1V1.forEach((nome, i) => { if (clicouCard(900, i)) sel1v1.vilao = nome })
+
+        if (btn(300, 665)) tela = 'menu'
+        if (btn(900, 665) && sel1v1.vilao && sel1v1.heroi) iniciar_luta_1v1()
+    }
+
     if (tela === 'cutscene') cena.avancar()
  
     if (tela === 'vitoria_fase1') {
@@ -454,19 +596,30 @@ document.getElementById('des').addEventListener('click', (e) => {
         if (btn(600, 630, 240, 35)) tela = 'menu'
     }
     if (tela === 'vitoria') {
-        // Tela final (telas.desenha_vitoria): "JOGAR NOVAMENTE" e "MENU"
-        if (btn(600, 430)) iniciar_cutscene_intro()
-        if (btn(600, 520)) tela = 'menu'
+        if (modo1v1) {
+            // Tela final 1v1 (telas.desenha_final_1v1): mesmos botões "JOGAR NOVAMENTE" e "MENU"
+            if (btn(600, 430)) iniciar_luta_1v1()
+            if (btn(600, 520)) { modo1v1 = false ; tela = 'menu' }
+        } else {
+            // Tela final (telas.desenha_vitoria): "JOGAR NOVAMENTE" e "MENU"
+            if (btn(600, 430)) iniciar_cutscene_intro()
+            if (btn(600, 520)) tela = 'menu'
+        }
     }
     if (tela === 'derrota') {
-        if (btn(600, 440)) {
-            // <── "Tentar Novamente" reinicia a fase atual (não volta pro início do jogo)
-            if      (fase === 2) iniciar_luta_fase2()
-            else if (fase === 3) iniciar_luta_fase3()
-            else if (fase === 4) iniciar_luta_fase4()
-            else iniciar_luta()
+        if (modo1v1) {
+            if (btn(600, 440)) iniciar_luta_1v1()
+            if (btn(600, 530)) { modo1v1 = false ; tela = 'menu' }
+        } else {
+            if (btn(600, 440)) {
+                // <── "Tentar Novamente" reinicia a fase atual (não volta pro início do jogo)
+                if      (fase === 2) iniciar_luta_fase2()
+                else if (fase === 3) iniciar_luta_fase3()
+                else if (fase === 4) iniciar_luta_fase4()
+                else iniciar_luta()
+            }
+            if (btn(600, 530)) tela = 'menu'
         }
-        if (btn(600, 530)) tela = 'menu'
     }
 })
  
@@ -475,9 +628,13 @@ document.getElementById('des').addEventListener('click', (e) => {
 // ═══════════════════════════════════════════════════════════════
 function atirar_heroi() {
     if (heroi.cooldownTiro > 0) return
-    heroi.cooldownTiro = 18
-    // Velocidade do tiro do herói aumentada (era 14)
-    tirosHeroi.push(new Tiro(heroi.x + heroi.w, heroi.y + heroi.h/2 - 3, 20, 0, 'heroi'))
+    // Cooldown: 0,4s (24 quadros a 60fps) no 1 V 1 pra evitar spam de tiro; modo história continua 18 quadros (~0,3s)
+    heroi.cooldownTiro = modo1v1 ? 24 : 18
+    // Velocidade do tiro do herói: 20 no modo história (aumentada, era 14)
+    // No 1 V 1, fica igualada à do vilão (14) para o duelo ser parelho
+    let velTiroHeroi = modo1v1 ? 14 : 20
+    tirosHeroi.push(new Tiro(heroi.x + heroi.w, heroi.y + heroi.h/2 - 3, velTiroHeroi, 0, 'heroi'))
+    heroi.timerSpriteAtirando = 14 // quadros que o sprite "atirando" fica visível (1V1)
 }
  
 function atirar_vilao() {
@@ -489,6 +646,19 @@ function atirar_vilao() {
         {vx:-6, vy: -3},
         {vx:-6, vy:  3},
     ].forEach(a => tirosVilao.push(new Tiro(tx, ty, a.vx, a.vy, 'vilao')))
+}
+
+// Disparo do Jogador 2 no modo 1 V 1 (tecla P), com cooldown próprio
+// Apenas 1 tiro, com velocidade igualada à do herói no 1 V 1 (14) — duelo parelho
+// Cooldown de 0,4s (24 quadros a 60fps), igual ao do herói, pra não virar spam de tiro
+// (a rajada de 3 tiros de atirar_vilao() continua exclusiva do modo história/IA)
+function atirar_vilao_jogador() {
+    if (vilao.cooldownTiro > 0) return
+    vilao.cooldownTiro = 24
+    let tx = vilao.x
+    let ty = vilao.y + vilao.h / 2
+    tirosVilao.push(new Tiro(tx, ty, -14, 0, 'vilao'))
+    vilao.timerSpriteAtirando = 14 // quadros que o sprite "atirando" fica visível (1V1)
 }
  
 function spawn_coracao() {
@@ -519,6 +689,7 @@ function colisoes() {
 function verificar_estado() {
     if (heroi.vida <= 0)  { tela = 'derrota'; return }
     if (vilao.vida <= 0)  {
+        if (modo1v1) { tela = 'vitoria'; return }
         if      (fase === 2) iniciar_cutscene_pos_luta_fase2()
         else if (fase === 3) iniciar_cutscene_pos_luta_fase3()
         else if (fase === 4) tela = 'vitoria_fase4' // <── mostra a tela de vitória antes do diálogo final
@@ -805,13 +976,18 @@ function desenha() {
     if      (tela === 'menu')          telas.desenha_menu()
     else if (tela === 'manual')        telas.desenha_manual()
     else if (tela === 'sobre')         telas.desenha_sobre()
+    else if (tela === 'selecao1v1')    telas.desenha_selecao_1v1(VILOES_1V1, HEROIS_1V1, sel1v1.vilao, sel1v1.heroi)
     else if (tela === 'cutscene')      cena.desenha()
     else if (tela === 'vitoria_fase1') desenha_vitoria_fase1()
     else if (tela === 'vitoria_fase2') desenha_vitoria_fase2()
     else if (tela === 'vitoria_fase3') desenha_vitoria_fase3()
     else if (tela === 'vitoria_fase4') desenha_vitoria_fase4()
+
     else if (tela === 'vitoria')       telas.desenha_vitoria()
     else if (tela === 'derrota')       telas.desenha_derrota(fase)
+
+    else if (tela === 'vitoria')       modo1v1 ? telas.desenha_final_1v1(true, sel1v1.heroi, sel1v1.vilao) : telas.desenha_vitoria()
+    else if (tela === 'derrota')       modo1v1 ? telas.desenha_final_1v1(false, sel1v1.heroi, sel1v1.vilao) : telas.desenha_derrota(fase)
     else if (tela === 'jogando') {
         desenha_fundo_luta()
         coletaveis.forEach(c => c.des_coracao())
@@ -820,7 +996,7 @@ function desenha() {
         heroi.des_heroi()
         vilao.des_vilao()
         telas.desenha_flash()
-        telas.desenha_hud(heroi, vilao, fase)
+        telas.desenha_hud(heroi, vilao, fase, modo1v1 ? sel1v1.heroi : null, modo1v1 ? sel1v1.vilao : null)
     }
 }
  
@@ -831,8 +1007,16 @@ function atualiza() {
     if (tela !== 'jogando')  return
  
     heroi.mov()
-    vilao.mov()
-    if (vilao.podeAtirar()) atirar_vilao()
+
+    if (modo1v1) {
+        frameSprite1v1++
+        // Modo 1 V 1: vilão é o Jogador 2, controlado por teclado (sem IA)
+        vilao.mov_jogador()
+    } else {
+        // Modo história: vilão controlado por IA
+        vilao.mov()
+        if (vilao.podeAtirar()) atirar_vilao()
+    }
  
     tirosHeroi.forEach(t => t.mov())
     tirosHeroi = tirosHeroi.filter(t => t.ativo)
@@ -843,7 +1027,7 @@ function atualiza() {
     coletaveis.forEach(c => c.mov())
     coletaveis = coletaveis.filter(c => c.ativo)
  
-    spawn_coracao()
+    if (!modo1v1) spawn_coracao() // Corações só aparecem no modo história, não no 1 V 1
     colisoes()
     verificar_estado()
 }
