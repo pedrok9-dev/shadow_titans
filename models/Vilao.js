@@ -60,7 +60,9 @@ class Vilao extends Obj {
         }
 
         if (quadro && quadro.complete && quadro.naturalWidth > 0) {
-            let sw = this.w * 1.4, sh = this.h * 1.4
+
+            let sw = this.w * 1.8, sh = this.h * 1.8
+
             let cx0 = this.x + this.w / 2
             let cy0 = this.y + this.h / 2
             des.drawImage(quadro, cx0 - sw / 2, cy0 - sh / 2, sw, sh)

@@ -38,9 +38,11 @@ class Tiro extends Obj {
     des_tiro() {
         if (!this.ativo) return
 
-        if (this.dono === 'heroi') {
-            let cx = this.x + this.w / 2
-            let cy = this.y + this.h / 2
+
+        if (this.dono === 'heroi') { 
+            des.fillStyle = '#ffffff'
+            des.fillRect(this.x + 4, this.y + 1, 6, 4)
+
 
             // <── escolhe o sprite do tiro conforme a fase
             let quadro = null
@@ -72,6 +74,7 @@ class Tiro extends Obj {
         } else {
             let cx = this.x + this.w / 2
             let cy = this.y + this.h / 2
+
 
             // <── escolhe o sprite do tiro do vilão conforme a fase
             let quadro = null

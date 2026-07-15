@@ -1,10 +1,8 @@
 let des = document.getElementById('des').getContext('2d')
- 
 
 let tela = 'menu'
 let fase = 1
  
-// ─── PRÉ-CARREGAMENTO DAS IMAGENS ─────────────────────────────
 let IMG = {}
 ;[
     ['torre',   'img/cenario1_torre.png'],   
@@ -68,7 +66,6 @@ let IMG = {}
     ['tiro_vilao_fase2',      'img/senhorX_tiro01.png'],
     ['tiro_vilao_fase3',      'img/shade_tiro01.png'],
     ['tiro_vilao_fase4',      'img/zul_tiro01.png'],
-    
 ].forEach(([k, src]) => {
     IMG[k] = new Image()
     IMG[k].src = src
