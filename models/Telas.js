@@ -58,20 +58,17 @@ class Telas {
 
     // ─── MENU INICIAL ─────────────────────────────────────────────
     desenha_menu() {
-        this._fundo_menu()
+        // Fundo = imagem principal do jogo (cobre a tela inteira, mantendo a proporção)
+        let img = IMG.menu_fundo
+        if (img && img.complete && img.naturalWidth > 0) {
+            let escala = 700 / img.naturalHeight
+            let imgW   = img.naturalWidth * escala
+            des.drawImage(img, (1200 - imgW) / 2, 0, imgW, 700)
+        } else {
+            this._fundo_menu()
+        }
 
-        // Logo / Título
-        des.font = 'bold 42px "Press Start 2P"'
         des.textAlign = 'center'
-        des.fillStyle = '#1a0060'
-        des.fillText('JOVENS TITÃS', 603, 153)
-        let a = 0.6 + 0.4 * Math.abs(Math.sin(Date.now() / 700))
-        des.fillStyle = `rgba(140, 80, 255, ${a})`
-        des.fillText('JOVENS TITÃS', 600, 150)
-
-        des.fillStyle = 'rgba(255,255,255,0.55)'
-        des.font = '10px "Press Start 2P"'
-        des.fillText('Proteja a Torre. Derrote o mal.', 600, 200)
 
         this._botao('▶  JOGAR', 600, 285, '#5c00c7', '#2e0060')
         this._botao('📖  MANUAL', 600, 375, '#00609c', '#003050')
