@@ -121,24 +121,27 @@ let IMG_PERSONAGENS = {}
 
 // ─────────────────────────────────────────────────────────────
 // Sprites de LUTA do 1 V 1 (parado x2 + atirando x1) por personagem
+// Reaproveita as imagens já carregadas em IMG (mesmas usadas no modo
+// história), já que não existem arquivos "*_parado1.png" separados.
 // ─────────────────────────────────────────────────────────────
-const SLUGS_1V1 = {
-    'Pedrion':        'pedrion',
-    'Daviborg':       'daviborg',
-    'Kreftalad':      'kreftalad',
-    'Mutávio':        'mutavio',
-    'Doutor Solaris': 'doutor_solaris',
-    'Senhor X':       'senhor_x',
-    'General Shade':  'general_shade',
-    'Zul\'Kahr':      'zulkahr',
+const CHAVES_1V1 = {
+    'Pedrion':        { parado1: 'pedrion_parado1',    parado2: 'pedrion_parado2',    atirando: 'pedrion_atirando' },
+    'Daviborg':       { parado1: 'davi_parado1',       parado2: 'davi_parado2',       atirando: 'davi_atirando' },
+    'Kreftalad':      { parado1: 'heroi_parado1',      parado2: 'heroi_parado2',      atirando: 'heroi_atirando' },
+    'Mutávio':        { parado1: 'mutavio_parado1',    parado2: 'mutavio_parado2',    atirando: 'mutavio_atirando' },
+    'Doutor Solaris': { parado1: 'vilao_fase1_parado1', parado2: 'vilao_fase1_parado2', atirando: 'vilao_fase1_atirando' },
+    'Senhor X':       { parado1: 'vilao_fase2_parado1', parado2: 'vilao_fase2_parado2', atirando: 'vilao_fase2_atirando' },
+    'General Shade':  { parado1: 'vilao_fase3_parado1', parado2: 'vilao_fase3_parado2', atirando: 'vilao_fase3_atirando' },
+    'Zul\'Kahr':      { parado1: 'vilao_fase4_parado1', parado2: 'vilao_fase4_parado2', atirando: 'vilao_fase4_atirando' },
 }
 
 let SPRITES_1V1 = {}
-Object.entries(SLUGS_1V1).forEach(([nome, slug]) => {
-    let parado1  = new Image() ; parado1.src  = `img/${slug}_parado1.png`
-    let parado2  = new Image() ; parado2.src  = `img/${slug}_parado2.png`
-    let atirando = new Image() ; atirando.src = `img/${slug}_atirando.png`
-    SPRITES_1V1[nome] = { parado1, parado2, atirando }
+Object.entries(CHAVES_1V1).forEach(([nome, chaves]) => {
+    SPRITES_1V1[nome] = {
+        parado1:  IMG[chaves.parado1],
+        parado2:  IMG[chaves.parado2],
+        atirando: IMG[chaves.atirando],
+    }
 })
 
 // Contador de quadros global, usado só pra alternar o sprite "parado" (anda 1 - 2) no 1 V 1
@@ -982,9 +985,6 @@ function desenha() {
     else if (tela === 'vitoria_fase2') desenha_vitoria_fase2()
     else if (tela === 'vitoria_fase3') desenha_vitoria_fase3()
     else if (tela === 'vitoria_fase4') desenha_vitoria_fase4()
-
-    else if (tela === 'vitoria')       telas.desenha_vitoria()
-    else if (tela === 'derrota')       telas.desenha_derrota(fase)
 
     else if (tela === 'vitoria')       modo1v1 ? telas.desenha_final_1v1(true, sel1v1.heroi, sel1v1.vilao) : telas.desenha_vitoria()
     else if (tela === 'derrota')       modo1v1 ? telas.desenha_final_1v1(false, sel1v1.heroi, sel1v1.vilao) : telas.desenha_derrota(fase)

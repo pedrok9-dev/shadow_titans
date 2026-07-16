@@ -47,16 +47,6 @@ class Tiro extends Obj {
             des.fillRect(this.x + 4, this.y + 1, 6, 4)
 
 
-            // <── escolhe o sprite do tiro conforme a fase
-            let quadro = null
-            if (fase === 1) {
-                quadro = Math.floor(Date.now() / 90) % 2 === 0 ? IMG.tiro_heroi1 : IMG.tiro_heroi2
-            } else if (fase === 2) {
-                quadro = IMG.tiro_davi1
-            } else if (fase === 3) {
-                quadro = IMG.tiro_pedrion1
-            } else if (fase === 4) {
-                quadro = IMG.tiro_mutavio1
             // <── escolhe o sprite do tiro conforme a fase (só no modo história;
             //     no modo 1 V 1 não há sprite de tiro por personagem ainda, então
             //     usa sempre o tiro neutro abaixo, sem herdar a fase da campanha)
@@ -71,7 +61,6 @@ class Tiro extends Obj {
                 } else if (fase === 4) {
                     quadro = IMG.tiro_mutavio1
                 }
-
             }
 
             if (quadro && quadro.complete && quadro.naturalWidth > 0) {
@@ -94,17 +83,6 @@ class Tiro extends Obj {
             let cy = this.y + this.h / 2
 
 
-            // <── escolhe o sprite do tiro do vilão conforme a fase
-            let quadro = null
-            if (fase === 1) {
-                quadro = IMG.tiro_vilao_fase1
-            } else if (fase === 2) {
-                quadro = IMG.tiro_vilao_fase2
-            } else if (fase === 3) {
-                quadro = IMG.tiro_vilao_fase3
-            } else if (fase === 4) {
-                quadro = IMG.tiro_vilao_fase4
-            }
             // <── escolhe o sprite do tiro do vilão conforme a fase (só no modo história;
             //     no modo 1 V 1 não há sprite de tiro por personagem ainda, então
             //     usa sempre o tiro neutro abaixo, sem herdar a fase da campanha)
@@ -136,5 +114,4 @@ class Tiro extends Obj {
             }
         }
     }
-}
 }
