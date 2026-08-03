@@ -4,7 +4,7 @@ class Telas {
     }
 
     atualiza() {
-        if (this.flashVermelho > 0) this.flashVermelho -= 0.05
+        if (this.flashVermelho > 0) this.flashVermelho -= 0.12
     }
 
     ativar_flash() {
@@ -75,6 +75,12 @@ class Telas {
         this._botao('📖  MANUAL', 600, 465, '#00609c', '#003050')
         this._botao('ℹ️  SOBRE', 600, 555, '#006040', '#002a1a')
 
+        // Detalhe leve: selinho de versão, discreto, no canto
+        des.fillStyle = 'rgba(255,255,255,0.25)'
+        des.font = '8px "Press Start 2P"'
+        des.textAlign = 'right'
+        des.fillText('Shadow Titans · v1.0', 1180, 685)
+
         des.textAlign = 'left'
     }
 
@@ -119,70 +125,126 @@ class Telas {
     }
 
     // ─── SOBRE ────────────────────────────────────────────────────
-    desenha_sobre() {
+    // Card de um integrante da equipe (grade 2x2 — usa posCardDev definido em index.js)
+    _card_dev(i, d) {
+        let c = posCardDev(i)
+        let corBorda = '#a060ff'
+
+        des.strokeStyle = corBorda
+        des.lineWidth = 2
+        des.strokeRect(c.x, c.y, c.w, c.h)
+        des.fillStyle = 'rgba(140,80,255,0.07)'
+        des.fillRect(c.x, c.y, c.w, c.h)
+
+        // Foto (círculo) — usa a foto real se existir, senão um espaço reservado
+        let raio = 46
+        let ax = c.x + 70, ay = c.y + c.h / 2
+        let img = d.foto ? IMG[d.foto] : null
+        let temFoto = !!(img && img.complete && img.naturalWidth > 0)
+
+        des.save()
+        des.beginPath()
+        des.arc(ax, ay, raio, 0, Math.PI * 2)
+        des.clip()
+        des.fillStyle = 'rgba(0,0,0,0.4)'
+        des.fillRect(ax - raio, ay - raio, raio * 2, raio * 2)
+        if (temFoto) des.drawImage(img, ax - raio, ay - raio, raio * 2, raio * 2)
+        des.restore()
+
+        des.beginPath()
+        des.arc(ax, ay, raio, 0, Math.PI * 2)
+        des.strokeStyle = corBorda
+        des.lineWidth = 2
+        des.stroke()
+
+        if (!temFoto) {
+            des.fillStyle = 'rgba(255,255,255,0.3)'
+            des.font = '22px "Press Start 2P"'
+            des.textAlign = 'center'
+            des.fillText('?', ax, ay + 8)
+        }
+
+        // Textos
+        let tx = c.x + 140
+        des.textAlign = 'left'
+        des.fillStyle = corBorda
+        des.font = '9px "Press Start 2P"'
+        let icone = /scrum/i.test(d.cargo) ? '🧭' : '👨‍💻'
+        des.fillText(`${icone} ${d.cargo.toUpperCase()}`, tx, c.y + 22)
+
+        des.fillStyle = 'white'
+        des.font = '13px "Press Start 2P"'
+        des.fillText(d.nome, tx, c.y + 46)
+
+        if (d.curso) {
+            des.fillStyle = 'rgba(255,255,255,0.5)'
+            des.font = '8px "Press Start 2P"'
+            des.fillText(d.curso, tx, c.y + 62)
+        }
+
+        if (d.instagram) {
+            des.fillStyle = d.instagram.url ? 'rgba(200,140,255,0.9)' : 'rgba(200,140,255,0.4)'
+            des.font = '8px "Press Start 2P"'
+            des.fillText(`📸 ${d.instagram.texto}  ${d.instagram.url ? '← clique' : '(em breve)'}`, tx, c.y + 82)
+        }
+        if (d.github) {
+            des.fillStyle = d.github.url ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.3)'
+            des.font = '8px "Press Start 2P"'
+            des.fillText(`🐙 ${d.github.texto}  ${d.github.url ? '← clique' : '(em breve)'}`, tx, c.y + 100)
+        }
+        if (!d.instagram && !d.github) {
+            des.fillStyle = 'rgba(255,255,255,0.25)'
+            des.font = '8px "Press Start 2P"'
+            des.fillText('— vaga disponível —', tx, c.y + 88)
+        }
+    }
+
+desenha_sobre() {
         this._fundo_menu()
 
         des.fillStyle = '#a060ff'
         des.font = '20px "Press Start 2P"'
         des.textAlign = 'center'
-        des.fillText('ℹ️  SOBRE', 600, 55)
+        des.fillText('ℹ️  SOBRE', 600, 40)
 
-        // Card dev
-        des.strokeStyle = '#a060ff'
-        des.lineWidth = 2
-        des.strokeRect(180, 90, 840, 180)
-        des.fillStyle = 'rgba(140,80,255,0.07)'
-        des.fillRect(180, 90, 840, 180)
-
-        des.fillStyle = '#a060ff'
-        des.font = '11px "Press Start 2P"'
-        des.fillText('👨‍💻 DESENVOLVEDOR', 600, 118)
-        des.fillStyle = 'white'
-        des.font = '16px "Press Start 2P"'
-        des.fillText('SEU NOME AQUI', 600, 155)
-        des.fillStyle = 'rgba(255,255,255,0.5)'
-        des.font = '9px "Press Start 2P"'
-        des.fillText('Técnico em Desenvolvimento de Sistemas', 600, 180)
-        des.fillStyle = 'rgba(180,120,255,0.8)'
-        des.font = '9px "Press Start 2P"'
-        des.fillText('📸 @seu_instagram  ← clique aqui', 600, 210)
-        des.fillStyle = 'rgba(255,255,255,0.7)'
-        des.font = '9px "Press Start 2P"'
-        des.fillText('🐙 GitHub: seu_github  ← clique aqui', 600, 238)
-        des.fillStyle = 'rgba(255,255,255,0.3)'
-        des.font = '9px "Press Start 2P"'
-        des.fillText('Sesi Senai - 2026', 600, 258)
+        // Equipe (4 vagas em grade 2x2)
+        let devs = (typeof DESENVOLVEDORES !== 'undefined') ? DESENVOLVEDORES : []
+        devs.slice(0, 4).forEach((d, i) => this._card_dev(i, d))
 
         // Card professor
         des.strokeStyle = '#00e5aa'
         des.lineWidth = 2
-        des.strokeRect(180, 290, 840, 120)
+        des.strokeRect(30, 348, 1140, 100)
         des.fillStyle = 'rgba(0,229,170,0.05)'
-        des.fillRect(180, 290, 840, 120)
+        des.fillRect(30, 348, 1140, 100)
         des.fillStyle = '#00e5aa'
         des.font = '11px "Press Start 2P"'
-        des.fillText('🎓 PROFESSOR ORIENTADOR (PRODUCT OWNER)', 600, 320)
+        des.textAlign = 'center'
+        des.fillText('🎓 PROFESSOR ORIENTADOR (PRODUCT OWNER)', 600, 375)
         des.fillStyle = 'white'
         des.font = '15px "Press Start 2P"'
-        des.fillText('Prof. Carlos', 600, 358)
+        des.fillText('Prof. Carlos', 600, 407)
         des.fillStyle = 'rgba(255,255,255,0.35)'
         des.font = '9px "Press Start 2P"'
-        des.fillText('Programação de Aplicativos', 600, 390)
+        des.fillText('Programação de Aplicativos', 600, 434)
 
-        // Tecnologias
+        // Tecnologias — esticado pra ocupar o espaço até o botão VOLTAR
         des.strokeStyle = '#a060ff'
         des.lineWidth = 2
-        des.strokeRect(180, 430, 840, 70)
+        des.strokeRect(30, 464, 1140, 128)
         des.fillStyle = 'rgba(140,80,255,0.05)'
-        des.fillRect(180, 430, 840, 70)
+        des.fillRect(30, 464, 1140, 128)
         des.fillStyle = '#a060ff'
         des.font = '10px "Press Start 2P"'
-        des.fillText('🛠️ HTML5 | Canvas API | JavaScript ES6+', 600, 460)
+        des.fillText('🛠️ HTML5 | CSS3 | Canvas API | JavaScript ES6+', 600, 498)
+        des.fillStyle = 'rgba(255,255,255,0.45)'
+        des.font = '9px "Press Start 2P"'
+        des.fillText('🎮 100% feito do zero, sem frameworks ou engines prontas', 600, 528)
         des.fillStyle = 'rgba(255,255,255,0.3)'
         des.font = '9px "Press Start 2P"'
-        des.fillText('© 2026 Shadow Titans - Todos os direitos reservados', 600, 485)
+        des.fillText('© 2026 Shadow Titans - Todos os direitos reservados', 600, 562)
 
-        this._botao('VOLTAR', 600, 625, '#5c00c7', '#2e0060')
+        this._botao('VOLTAR', 600, 645, '#5c00c7', '#2e0060')
         des.textAlign = 'left'
     }
 
@@ -341,10 +403,25 @@ class Telas {
         des.fillText(`${heroi.vida} / ${heroi.vidaMax}`, barraX + 80, barraY + 12)
 
         // == FASE CENTRO ==
-        des.fillStyle = 'white'
         des.font = '14px "Press Start 2P"'
         des.textAlign = 'center'
-        des.fillText(nomeHeroi ? '1 V 1' : 'FASE ' + fase, 600, 38)
+        if (!nomeHeroi && fase === 4) {
+            // Chefão final (Zul'Kahr) — destaque no centro do HUD
+            let p = 0.6 + 0.4 * Math.abs(Math.sin(Date.now() / 300))
+            let emFuria = vilao.vida <= vilao.vidaMax / 2
+            let texto
+            if (vilao.transformado) {
+                des.fillStyle = `rgba(255,60,255,${p})` // 2ª forma: destaque roxo/rosa (combina com a aura nova)
+                texto = emFuria ? '☠ FÚRIA SOMBRIA! ☠' : '☠ FORMA SOMBRIA ☠'
+            } else {
+                des.fillStyle = `rgba(255,70,70,${p})`
+                texto = emFuria ? '☠ FÚRIA FINAL! ☠' : '⚠ CHEFÃO FINAL ⚠'
+            }
+            des.fillText(texto, 600, 38)
+        } else {
+            des.fillStyle = 'white'
+            des.fillText(nomeHeroi ? '1 V 1' : 'FASE ' + fase, 600, 38)
+        }
 
         // == BARRA DE VIDA VILÃO ==
         des.fillStyle = '#ff4444'

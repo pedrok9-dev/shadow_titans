@@ -74,11 +74,42 @@ let IMG = {}
     ['vilao_fase4_parado3',  'img/zul_parado_03.png'],
     ['vilao_fase4_atirando', 'img/zulkar_atirando_01.png'],
     ['tiro_vilao_fase4',     'img/zul_tiro01.png'],
-    
+
+    // ── Foto da equipe (tela SOBRE) ──
+    ['foto_paulo',  'img/foto_paulo.png'],
+    ['foto_pedro',  'img/foto_pedro.png'],
+    ['foto_davi',   'img/foto_davi.jpeg'],
+    ['foto_krefta', 'img/foto_krefta.png'],
+
 ].forEach(([k, src]) => {
     IMG[k] = new Image()
     IMG[k].src = src
 })
+
+// ═══════════════════════════════════════════════════════════════
+//  ÁUDIO / EFEITOS SONOROS
+// ═══════════════════════════════════════════════════════════════
+let SOM = {}
+;[
+    ['tiro',    'img/som_tiro.mp3',      0.5], // toca sempre que qualquer herói ou vilão atira (campanha e 1 V 1)
+    ['batida',  'img/musica_batida.mp3', 0.6], // toca quando um tiro acerta o herói ou o vilão (campanha e 1 V 1)
+    ['coletar', 'img/musica_coletar.mp3',0.6], // toca quando o herói pega um coração/coletável
+].forEach(([k, src, vol]) => {
+    SOM[k] = new Audio(src)
+    SOM[k].volume = vol
+})
+
+// Toca um efeito sonoro. Usa um clone do <audio> pra permitir sons
+// sobrepostos (ex: vários tiros seguidos não cortam o som um do outro).
+function tocar_som(nome) {
+    let base = SOM[nome]
+    if (!base) return
+    let clone = base.cloneNode()
+    clone.volume = base.volume
+    // .play() pode rejeitar antes da 1ª interação do usuário (política de
+    // autoplay do navegador) — ignoramos o erro pra não travar o jogo.
+    clone.play().catch(() => {})
+}
  
 // ═══════════════════════════════════════════════════════════════
 //  OBJETOS
@@ -143,6 +174,56 @@ Object.entries(CHAVES_1V1).forEach(([nome, chaves]) => {
         atirando: IMG[chaves.atirando],
     }
 })
+
+//  EQUIPE (tela SOBRE) — 4 vagas
+const DESENVOLVEDORES = [
+    {
+        nome:      'Paulo Otávio',
+        cargo:     'Developer',
+        curso:     'Técnico em Desenvolvimento de Sistemas',
+        foto:      'foto_paulo',
+        instagram: { texto: '@__paulo.otv', url: 'https://www.instagram.com/__paulo.otv' },
+        github:    { texto: 'otaviok9',     url: 'https://github.com/otaviok9' },
+    },
+    {
+        nome:      'Pedro Augusto',
+        cargo:     'Scrum Master',
+        curso:     'Técnico em Desenvolvimento de Sistemas',
+        foto:      'foto_pedro',
+        instagram: { texto: '@pedrinqzx', url: 'https://www.instagram.com/pedrinqzx/' },
+        github:    { texto: 'pedrok9',     url: 'https://github.com/pedrok9-dev' },
+    },
+    {
+        nome:      'Davi Hames',
+        cargo:     'Developer',
+        curso:     'Técnico em Desenvolvimento de Sistemas',
+        foto:      'foto_davi',
+        instagram: { texto: '@davi.hams', url: 'https://www.instagram.com/davi.hams/' },
+        github:    { texto: 'davidbillsiu',url: 'https://github.com/davidbillsiu' },
+    },
+    {
+        nome:      'Pedro Krefta',
+        cargo:     'Developer',
+        curso:     'Técnico em Desenvolvimento de Sistemas',
+        foto:      'foto_krefta',
+        instagram: { texto: '@pedro_tkd', url: 'https://www.instagram.com/pedro__tkd/' },
+        github:    { texto: 'pedro-krefta',url: 'https://github.com/pedro-krefta' },
+    },
+]
+
+// Posição/tamanho do card do integrante i (0 a 3) na tela SOBRE — grade 2x2
+function posCardDev(i) {
+    let cardW = 560, cardH = 128, gapX = 20, gapY = 14
+    let startX = 30, startY = 62
+    let col = i % 2
+    let row = Math.floor(i / 2)
+    return {
+        x: startX + col * (cardW + gapX),
+        y: startY + row * (cardH + gapY),
+        w: cardW,
+        h: cardH,
+    }
+}
 
 // Contador de quadros global, usado só pra alternar o sprite "parado" (anda 1 - 2) no 1 V 1
 let frameSprite1v1 = 0
@@ -299,6 +380,32 @@ const FALAS_FASE4 = [
     },
 ]
 
+// ─── Transição da Fase 4 (Zul'Kahr perde a 1ª barra de vida e se transforma) ──
+// Dispara no meio da luta, quando a vida da 1ª forma do chefão chega a 0.
+// A gameplay "pausa" (mesmo sistema de cutscene usado no resto do jogo) pra
+// mostrar o diálogo, e ao terminar o Zul'Kahr volta com mais vida e uma aura
+// diferente (ver Vilao.js → des_vilao, propriedade "transformado").
+const FALAS_TRANSICAO_FASE4 = [
+    {
+        personagem: 'Narrador',
+        fala: 'O corpo de Zul\'Kahr racha como pedra vulcânica. Uma energia roxa e sombria escapa das fendas, envolvendo-o por completo. O ar fica pesado, e o céu vermelho começa a piscar em tons de violeta.',
+        cor: '#c8b8ff',
+        fundo: 'lutaFinal'
+    },
+    {
+        personagem: 'Zul\'Kahr',
+        fala: 'ARGH! IMPOSSÍVEL! UM MERO MORTAL FERIU A MINHA CARNE?! Vocês despertaram algo que este mundo não estava pronto para enfrentar... ISSO AINDA NÃO ACABOU!',
+        cor: '#ff2200',
+        fundo: 'lutaFinal'
+    },
+    {
+        personagem: 'Mutávio',
+        fala: 'Forma nova, mesma cara feia! Não importa quantas vezes você mude, eu não vou recuar! Vou até o final, custe o que custar!',
+        cor: '#66ff66',
+        fundo: 'lutaFinal'
+    },
+]
+
 // ─── Epílogo pós-luta Fase 4 (final do jogo) ──────────────────
 const FALAS_POS_LUTA_FASE4 = [
     {
@@ -339,7 +446,7 @@ const FALAS_POS_LUTA_FASE4 = [
     },
     {
         personagem: 'Narrador',
-        fala: 'E assim, trabalhando em equipe e confiando na liderança e nas habilidades de cada um, os Jovens Titãs salvaram as meninas, protegeram sua casa e trouxeram a paz de volta para Jump City.',
+        fala: 'E assim, trabalhando em equipe e confiando na liderança e nas habilidades de cada um, os Jovens Titãs salvaram as meninas, protegeram sua casa e trouxeram a paz de volta para Itapema City.',
         cor: '#c8b8ff',
         fundo: 'torre'
     },
@@ -401,15 +508,23 @@ function iniciar_luta_fase3() {
 
 function iniciar_luta_fase4() {
     heroi.x = 100 ; heroi.y = 300
-    heroi.vida = 5 ; heroi.vidaMax = 5
+    heroi.vida = 15 ; heroi.vidaMax = 15
     heroi.dirX = 0 ; heroi.dirY = 0
     heroi.cooldownTiro = 0
- 
+
+    // ── ZUL'KAHR — CHEFÃO FINAL ──────────────────────────────────
+    // Combate em 2 formas: a 1ª forma tem 15 de vida; ao zerar, entra
+    // uma cutscene de transição (FALAS_TRANSICAO_FASE4) e ele volta com
+    // mais 10 de vida e uma aura diferente (ver iniciar_transicao_fase4
+    // e Vilao.js → des_vilao / propriedade "transformado").
     vilao.x = 1050 ; vilao.y = 280
-    vilao.vida = 10 ; vilao.vidaMax = 10
+    vilao.vida = 15 ; vilao.vidaMax = 15
     vilao.velY = 3.5
-    vilao.timerTiro = 70 ; vilao.intervalTiro = 70
- 
+    vilao.timerTiro = 60 ; vilao.intervalTiro = 70
+    vilao.padraoAtaque = 0        // qual dos padrões de ataque vem a seguir
+    vilao._timerImprevisto = 0    // usado no movimento errático (ver Vilao.js → mov())
+    vilao.transformado = false    // 2ª forma (aura diferente) ainda não ativada
+
     tirosHeroi = [] ; tirosVilao = [] ; coletaveis = []
     timerCoracao = 0
     fase = 4
@@ -462,6 +577,20 @@ function iniciar_cutscene_fase4() {
     tela = 'cutscene'
     cena.iniciar(FALAS_FASE4, IMG, () => {
         iniciar_luta_fase4()    // ao terminar as falas → vai pra luta da Fase 4
+    })
+}
+
+// "Pausa" a gameplay no meio da luta contra o Zul'Kahr (1ª forma zerou a
+// vida) pra mostrar o diálogo de transição. Ao terminar, ele volta pra
+// luta com mais vida (2ª forma) e uma aura diferente.
+function iniciar_transicao_fase4() {
+    tela = 'cutscene'
+    cena.iniciar(FALAS_TRANSICAO_FASE4, IMG, () => {
+        vilao.vida = 10 ; vilao.vidaMax = 10   // 2ª forma: mais 10 de vida
+        vilao.transformado = true              // ativa a aura diferente (ver Vilao.js)
+        vilao.padraoAtaque = 0
+        vilao.timerTiro = 60 ; vilao.intervalTiro = 65 // um pouco mais agressivo na 2ª forma
+        tela = 'jogando'
     })
 }
  
@@ -548,7 +677,18 @@ document.getElementById('des').addEventListener('click', (e) => {
         if (btn(600, 555)) tela = 'sobre'
     }
     if (tela === 'manual')  { if (btn(600, 665)) tela = 'menu' }
-    if (tela === 'sobre')   { if (btn(600, 625)) tela = 'menu' }
+    if (tela === 'sobre')   {
+        if (btn(600, 645)) tela = 'menu'
+        DESENVOLVEDORES.forEach((d, i) => {
+            let c = posCardDev(i)
+            if (d.instagram && d.instagram.url && cx > c.x + 140 && cx < c.x + 540 && cy > c.y + 70 && cy < c.y + 92) {
+                window.open(d.instagram.url, '_blank')
+            }
+            if (d.github && d.github.url && cx > c.x + 140 && cx < c.x + 540 && cy > c.y + 88 && cy < c.y + 110) {
+                window.open(d.github.url, '_blank')
+            }
+        })
+    }
 
     if (tela === 'selecao1v1') {
         // Grade 2x2 desenhada em _grade_selecao: cards de 220x240, gap 20, início y=110
@@ -638,6 +778,7 @@ function atirar_heroi() {
     let velTiroHeroi = modo1v1 ? 14 : 20
     tirosHeroi.push(new Tiro(heroi.x + heroi.w, heroi.y + heroi.h/2 - 3, velTiroHeroi, 0, 'heroi'))
     heroi.timerSpriteAtirando = 14 // quadros que o sprite "atirando" fica visível (1V1)
+    tocar_som('tiro')
 }
  
 function atirar_vilao() {
@@ -649,6 +790,7 @@ function atirar_vilao() {
         {vx:-6, vy: -3},
         {vx:-6, vy:  3},
     ].forEach(a => tirosVilao.push(new Tiro(tx, ty, a.vx, a.vy, 'vilao')))
+    tocar_som('tiro')
 }
 
 // Disparo do Jogador 2 no modo 1 V 1 (tecla P), com cooldown próprio
@@ -662,11 +804,69 @@ function atirar_vilao_jogador() {
     let ty = vilao.y + vilao.h / 2
     tirosVilao.push(new Tiro(tx, ty, -14, 0, 'vilao'))
     vilao.timerSpriteAtirando = 14 // quadros que o sprite "atirando" fica visível (1V1)
+    tocar_som('tiro')
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ZUL'KAHR — CHEFÃO FINAL (só entra na Fase 4; as demais fases
+//  continuam usando atirar_vilao() exatamente como antes)
+// ═══════════════════════════════════════════════════════════════
+function atirar_vilao_fase4() {
+    let tx = vilao.x
+    let ty = vilao.y + vilao.h / 2
+
+    // A partir da metade da vida, o chefão entra em "fúria final": atira mais rápido
+    let furia = vilao.vida <= vilao.vidaMax / 2
+
+    let padrao = vilao.padraoAtaque % 4
+
+    if (padrao === 0) {
+        // Leque de 5 tiros
+        ;[
+            {vx:-8, vy:  0},
+            {vx:-7, vy: -3},
+            {vx:-7, vy:  3},
+            {vx:-6, vy: -6},
+            {vx:-6, vy:  6},
+        ].forEach(a => tirosVilao.push(new Tiro(tx, ty, a.vx, a.vy, 'vilao')))
+
+    } else if (padrao === 1) {
+        // Tiro mirado, calculado na posição atual do herói
+        let dx = (heroi.x + heroi.w / 2) - tx
+        let dy = (heroi.y + heroi.h / 2) - ty
+        let dist = Math.max(1, Math.sqrt(dx * dx + dy * dy))
+        let vel = 12
+        tirosVilao.push(new Tiro(tx, ty, (dx / dist) * vel, (dy / dist) * vel, 'vilao'))
+        if (furia) {
+            // Na fúria, manda um segundo tiro mirado logo ao lado
+            tirosVilao.push(new Tiro(tx, ty + 20, (dx / dist) * vel, (dy / dist) * vel, 'vilao'))
+        }
+
+    } else if (padrao === 2) {
+        // Parede vertical: 4 tiros retos em alturas diferentes
+        ;[-90, -30, 30, 90].forEach(dy => {
+            tirosVilao.push(new Tiro(tx, vilao.y + vilao.h / 2 + dy, -9, 0, 'vilao'))
+        })
+
+    } else {
+        // Rajada reta veloz (mais tiros ainda na fúria final)
+        let n = furia ? 4 : 2
+        for (let i = 0; i < n; i++) {
+            tirosVilao.push(new Tiro(tx, ty + (i - (n - 1) / 2) * 16, -13, 0, 'vilao'))
+        }
+    }
+
+    vilao.padraoAtaque++
+    vilao.intervalTiro = furia ? 48 : 70 // fúria final = ataca com mais frequência (mas não impossível)
+    tocar_som('tiro')
 }
  
 function spawn_coracao() {
     timerCoracao++
-    if (timerCoracao >= INTERVALO_CORACAO) {
+    // Na fase do Mutávio (chefão final) os corações aparecem bem mais seguido,
+    // já que a luta é mais longa e mais puxada
+    let intervalo = (fase === 4) ? Math.floor(INTERVALO_CORACAO / 2.5) : INTERVALO_CORACAO
+    if (timerCoracao >= intervalo) {
         timerCoracao = 0
         coletaveis.push(new Coletavel(Math.floor(Math.random() * 800 + 100), -30))
     }
@@ -674,17 +874,18 @@ function spawn_coracao() {
  
 function colisoes() {
     tirosHeroi.forEach(t => {
-        if (t.ativo && t.colid(vilao)) { t.ativo = false; vilao.vida-- }
+        if (t.ativo && t.colid(vilao)) { t.ativo = false; vilao.vida--; telas.ativar_flash(); tocar_som('batida') }
     })
     tirosVilao.forEach(t => {
         if (t.ativo && t.colid(heroi)) {
-            t.ativo = false; heroi.vida--; telas.ativar_flash()
+            t.ativo = false; heroi.vida--; telas.ativar_flash(); tocar_som('batida')
         }
     })
     coletaveis.forEach(c => {
         if (c.ativo && heroi.colid(c)) {
             c.ativo = false
             heroi.vida = Math.min(heroi.vida + 1, heroi.vidaMax)
+            tocar_som('coletar')
         }
     })
 }
@@ -693,6 +894,7 @@ function verificar_estado() {
     if (heroi.vida <= 0)  { tela = 'derrota'; return }
     if (vilao.vida <= 0)  {
         if (modo1v1) { tela = 'vitoria'; return }
+        if (fase === 4 && !vilao.transformado) { iniciar_transicao_fase4(); return } // <── 1ª forma zerou: pausa e transforma
         if      (fase === 2) iniciar_cutscene_pos_luta_fase2()
         else if (fase === 3) iniciar_cutscene_pos_luta_fase3()
         else if (fase === 4) tela = 'vitoria_fase4' // <── mostra a tela de vitória antes do diálogo final
@@ -1015,7 +1217,10 @@ function atualiza() {
     } else {
         // Modo história: vilão controlado por IA
         vilao.mov()
-        if (vilao.podeAtirar()) atirar_vilao()
+        if (vilao.podeAtirar()) {
+            if (fase === 4) atirar_vilao_fase4() // chefão final: padrão de ataque próprio
+            else atirar_vilao()
+        }
     }
  
     tirosHeroi.forEach(t => t.mov())
@@ -1038,4 +1243,4 @@ function main() {
     requestAnimationFrame(main)
 }
  
-main()
+main() 
