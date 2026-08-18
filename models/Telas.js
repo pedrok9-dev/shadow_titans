@@ -11,7 +11,7 @@ class Telas {
         this.flashVermelho = 1
     }
 
-    // ─── FUNDO MENU ───────────────────────────────────────────────
+    // ─── FUNDO MENU (telas secundárias: manual, sobre, etc) ───────
     _fundo_menu() {
         let grad = des.createLinearGradient(0, 0, 0, 700)
         grad.addColorStop(0, '#06001a')
@@ -40,6 +40,101 @@ class Telas {
         des.globalAlpha = 1
     }
 
+    // ─── FUNDO MENU PRINCIPAL (skyline noturno inspirado na arte oficial) ─
+    _fundo_menu_titulo() {
+        // Céu em gradiente (azul-marinho profundo)
+        let grad = des.createLinearGradient(0, 0, 0, 700)
+        grad.addColorStop(0, '#04061a')
+        grad.addColorStop(0.55, '#0a1230')
+        grad.addColorStop(1, '#141c40')
+        des.fillStyle = grad
+        des.fillRect(0, 0, 1200, 700)
+
+        // Estrelas cintilantes
+        let estrelas = [
+            [80,60],[220,30],[400,80],[600,20],[850,65],[1050,40],[1150,85],
+            [140,190],[360,140],[560,170],[760,110],[1080,190],
+            [190,340],[450,290],[910,270],[1160,330],
+            [70,490],[310,470],[720,455],[1100,470],
+            [55,150],[185,310],[690,430],[830,175],[1090,255]
+        ]
+        estrelas.forEach(([x, y], i) => {
+            let a = 0.2 + 0.6 * Math.abs(Math.sin(Date.now() / 900 + i * 0.5))
+            des.globalAlpha = a
+            des.fillStyle = 'white'
+            des.beginPath()
+            des.arc(x, y, 1.3, 0, Math.PI * 2)
+            des.fill()
+        })
+        des.globalAlpha = 1
+
+        // Resplendor suave atrás da lua
+        des.save()
+        let luaGlow = des.createRadialGradient(990, 85, 10, 990, 85, 75)
+        luaGlow.addColorStop(0, 'rgba(180,210,255,0.28)')
+        luaGlow.addColorStop(1, 'rgba(180,210,255,0)')
+        des.fillStyle = luaGlow
+        des.beginPath()
+        des.arc(990, 85, 75, 0, Math.PI * 2)
+        des.fill()
+        des.restore()
+
+        // Lua crescente
+        des.save()
+        des.fillStyle = 'rgba(215,228,255,0.95)'
+        des.beginPath()
+        des.arc(990, 85, 34, 0, Math.PI * 2)
+        des.fill()
+        des.globalCompositeOperation = 'destination-out'
+        des.beginPath()
+        des.arc(1005, 73, 30, 0, Math.PI * 2)
+        des.fill()
+        des.restore()
+
+        // Torre distante (silhueta), lado esquerdo — remete à arte original
+        des.fillStyle = 'rgba(12,14,32,0.9)'
+        des.beginPath()
+        des.moveTo(85, 700)
+        des.lineTo(85, 335)
+        des.lineTo(65, 300)
+        des.lineTo(65, 245)
+        des.lineTo(135, 245)
+        des.lineTo(135, 300)
+        des.lineTo(115, 335)
+        des.lineTo(115, 700)
+        des.closePath()
+        des.fill()
+        des.fillStyle = 'rgba(255,205,110,0.35)'
+        des.fillRect(80, 260, 40, 30)
+
+        // Skyline da cidade (silhueta) ao fundo
+        let predios = [
+            [170,700,40,170],[220,700,55,250],[290,700,35,135],[335,700,60,310],
+            [420,700,45,185],[480,700,70,235],[570,700,50,155],[640,700,65,270],
+            [730,700,40,165],[790,700,55,225],[865,700,45,145],[935,700,60,195],
+            [1015,700,50,255],[1085,700,65,185],[1160,700,30,135]
+        ]
+        des.fillStyle = 'rgba(9,10,24,0.92)'
+        predios.forEach(([x, base, w, h]) => des.fillRect(x, base - h, w, h))
+
+        // Janelinhas acesas (padrão fixo, sem "piscar" a cada frame)
+        des.fillStyle = 'rgba(255,208,120,0.55)'
+        predios.forEach(([x, base, w, h]) => {
+            for (let jy = base - h + 16; jy < base - 10; jy += 22) {
+                for (let jx = x + 8; jx < x + w - 8; jx += 16) {
+                    if ((jx * 7 + jy * 13) % 5 === 0) des.fillRect(jx, jy, 5, 8)
+                }
+            }
+        })
+
+        // Névoa escura na base para dar profundidade
+        let nevoa = des.createLinearGradient(0, 550, 0, 700)
+        nevoa.addColorStop(0, 'rgba(4,5,14,0)')
+        nevoa.addColorStop(1, 'rgba(4,5,14,0.75)')
+        des.fillStyle = nevoa
+        des.fillRect(0, 550, 1200, 150)
+    }
+
     // ─── BOTÃO ────────────────────────────────────────────────────
     _botao(texto, x, y, cor, corSombra) {
         des.fillStyle = corSombra || '#222'
@@ -58,22 +153,32 @@ class Telas {
 
     // ─── MENU INICIAL ─────────────────────────────────────────────
     desenha_menu() {
-        // Fundo = imagem principal do jogo (cobre a tela inteira, mantendo a proporção)
-        let img = IMG.menu_fundo
-        if (img && img.complete && img.naturalWidth > 0) {
-            let escala = 700 / img.naturalHeight
-            let imgW   = img.naturalWidth * escala
-            des.drawImage(img, (1200 - imgW) / 2, 0, imgW, 700)
-        } else {
-            this._fundo_menu()
-        }
+        // Fundo: skyline noturno inspirado na arte oficial de Shadow Titans
+        this._fundo_menu_titulo()
 
+        // Título "SHADOW TITANS" centralizado no topo
         des.textAlign = 'center'
 
-        this._botao('▶  JOGAR', 600, 285, '#5c00c7', '#2e0060')
-        this._botao('⚔️  1 V 1', 600, 375, '#a30030', '#4a0016')
-        this._botao('📖  MANUAL', 600, 465, '#00609c', '#003050')
-        this._botao('ℹ️  SOBRE', 600, 555, '#006040', '#002a1a')
+        // sombra/contorno do título (profundidade)
+        des.font = 'bold 46px "Press Start 2P"'
+        des.fillStyle = '#0c1230'
+        des.fillText('SHADOW', 604, 114)
+        des.fillText('TITANS', 604, 172)
+
+        // brilho azulado por trás do texto principal
+        des.save()
+        des.shadowColor = 'rgba(120,180,255,0.85)'
+        des.shadowBlur = 22
+        des.fillStyle = '#eef4ff'
+        des.fillText('SHADOW', 600, 110)
+        des.fillText('TITANS', 600, 168)
+        des.restore()
+
+        // Botões — Jogar, 1v1, Manual, Sobre (paleta do jogo: dourado da torre, azul e roxo do brilho do logo)
+        this._botao('▶  JOGAR', 600, 305, '#d4a017', '#5c3d00')
+        this._botao('⚔️  1 V 1', 600, 380, '#2f6fdb', '#0f2a5c')
+        this._botao('📖  MANUAL', 600, 455, '#6b3fd4', '#2a1560')
+        this._botao('ℹ️  SOBRE', 600, 530, '#1fa8b8', '#0a3f47')
 
         // Detalhe leve: selinho de versão, discreto, no canto
         des.fillStyle = 'rgba(255,255,255,0.25)'
